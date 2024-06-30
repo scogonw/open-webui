@@ -315,7 +315,7 @@
 
 			<hr class=" dark:border-gray-850" />
 
-			<div class="pr-1.5 space-y-2">
+			<!-- <div class="pr-1.5 space-y-2">
 				<div class="flex justify-between items-center text-sm">
 					<div class="  font-medium">{$i18n.t('Ollama API')}</div>
 
@@ -425,7 +425,7 @@
 						</a>
 					</div>
 				{/if}
-			</div>
+			</div> -->
 		{:else}
 			<div class="flex h-full justify-center">
 				<div class="my-auto">

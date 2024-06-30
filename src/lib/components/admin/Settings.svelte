@@ -101,7 +101,7 @@
 			<div class=" self-center">{$i18n.t('Connections')}</div>
 		</button>
 
-		<button
+		<!-- <button
 			class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
 			'models'
 				? 'bg-gray-200 dark:bg-gray-800'
@@ -125,9 +125,9 @@
 				</svg>
 			</div>
 			<div class=" self-center">{$i18n.t('Models')}</div>
-		</button>
+		</button> -->
 
-		<button
+		<!-- <button
 			class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
 			'documents'
 				? 'bg-gray-200 dark:bg-gray-800'
@@ -155,7 +155,7 @@
 				</svg>
 			</div>
 			<div class=" self-center">{$i18n.t('Documents')}</div>
-		</button>
+		</button> -->
 
 		<button
 			class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===

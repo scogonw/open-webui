@@ -68,7 +68,7 @@
 			class=" mt-2 mb-4 text-3xl text-gray-800 dark:text-gray-100 font-semibold text-left flex items-center gap-4"
 		>
 			<div>
-				<div class=" capitalize line-clamp-1" in:fade={{ duration: 200 }}>
+				<div class=" capitalize line-clamp-1 bg-clip-text text-transparent bg-gradient-to-r from-[#5083EE] via-[#B76CA1] via-[#BB6B9B] to-[#D56676]" in:fade={{ duration: 200 }}>
 					{#if models[selectedModelIdx]?.info}
 						{models[selectedModelIdx]?.info?.name}
 					{:else}
@@ -102,7 +102,7 @@
 							</div>
 						{/if}
 					{:else}
-						<div class=" font-medium text-gray-400 dark:text-gray-500 line-clamp-1">
+						<div class=" font-medium text-[#C4C7C5] dark:text-gray-500 line-clamp-1">
 							{$i18n.t('How can I help you today?')}
 						</div>
 					{/if}

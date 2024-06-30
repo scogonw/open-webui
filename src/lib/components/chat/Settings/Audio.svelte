@@ -88,7 +88,9 @@
 >
 	<div class=" space-y-3 pr-1.5 overflow-y-scroll max-h-[25rem]">
 		<div>
-			<div class=" mb-1 text-sm font-medium">{$i18n.t('STT Settings')}</div>
+			{#if $user?.role === 'admin'}
+				<div class=" mb-1 text-sm font-medium">{$i18n.t('STT Settings')}</div>
+			{/if}
 
 			{#if $config.audio.stt.engine !== 'web'}
 				<div class=" py-0.5 flex w-full justify-between">
@@ -128,7 +130,9 @@
 		</div>
 
 		<div>
-			<div class=" mb-1 text-sm font-medium">{$i18n.t('TTS Settings')}</div>
+			{#if $user?.role === 'admin'}
+				<div class=" mb-1 text-sm font-medium">{$i18n.t('TTS Settings')}</div>
+			{/if}
 
 			<div class=" py-0.5 flex w-full justify-between">
 				<div class=" self-center text-xs font-medium">{$i18n.t('Auto-playback response')}</div>
@@ -149,7 +153,9 @@
 			</div>
 		</div>
 
-		<hr class=" dark:border-gray-850" />
+		{#if $user?.role === 'admin'}
+			<hr class=" dark:border-gray-850" />
+		{/if}
 
 		{#if $config.audio.tts.engine === ''}
 			<div>
@@ -171,15 +177,17 @@
 						</select>
 					</div>
 				</div>
-				<div class="flex items-center justify-between my-1.5">
-					<div class="text-xs">
-						{$i18n.t('Allow non-local voices')}
+				{#if $user?.role === 'admin'}
+					<div class="flex items-center justify-between my-1.5">
+						<div class="text-xs">
+							{$i18n.t('Allow non-local voices')}
+						</div>
+						
+						<div class="mt-1">
+							<Switch bind:state={nonLocalVoices} />
+						</div>
 					</div>
-
-					<div class="mt-1">
-						<Switch bind:state={nonLocalVoices} />
-					</div>
-				</div>
+				{/if}
 			</div>
 		{:else if $config.audio.tts.engine === 'openai'}
 			<div>

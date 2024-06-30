@@ -66,7 +66,7 @@
 	let dragged = false;
 
 	let user = null;
-	let chatInputPlaceholder = '';
+	let chatInputPlaceholder = 'Ask Sia...';
 
 	export let files = [];
 
@@ -670,7 +670,7 @@
 							{/if}
 
 							<div class=" flex">
-								<div class=" ml-0.5 self-end mb-1.5 flex space-x-1">
+								<!-- <div class=" ml-0.5 self-end mb-1.5 flex space-x-1">
 									<InputMenu
 										bind:webSearchEnabled
 										bind:selectedToolIds
@@ -708,12 +708,12 @@
 											</svg>
 										</button>
 									</InputMenu>
-								</div>
+								</div> -->
 
 								<textarea
 									id="chat-textarea"
 									bind:this={chatTextAreaElement}
-									class="scrollbar-hidden bg-gray-50 dark:bg-gray-850 dark:text-gray-100 outline-none w-full py-3 px-1 rounded-xl resize-none h-[48px]"
+									class="scrollbar-hidden bg-gray-50 dark:bg-gray-850 dark:text-gray-100 outline-none w-full py-3 px-1 rounded-xl resize-none h-[48px] ml-3"
 									placeholder={chatInputPlaceholder !== ''
 										? chatInputPlaceholder
 										: $i18n.t('Send a Message')}
@@ -1020,7 +1020,7 @@
 				{/if}
 
 				<div class="mt-1.5 text-xs text-gray-500 text-center line-clamp-1">
-					{$i18n.t('LLMs can make mistakes. Verify important information.')}
+					{$i18n.t('Sia AI Assistant can make mistakes, so double-check its responses')}
 				</div>
 			</div>
 		</div>

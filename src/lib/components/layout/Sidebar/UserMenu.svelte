@@ -67,7 +67,7 @@
 				<div class=" self-center font-medium">{$i18n.t('Settings')}</div>
 			</button>
 
-			<button
+			<!-- <button
 				class="flex rounded-md py-2 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
 				on:click={() => {
 					dispatch('show', 'archived-chat');
@@ -78,7 +78,7 @@
 					<ArchiveBox className="size-5" strokeWidth="1.5" />
 				</div>
 				<div class=" self-center font-medium">{$i18n.t('Archived Chats')}</div>
-			</button>
+			</button> -->
 
 			{#if role === 'admin'}
 				<button
@@ -166,7 +166,7 @@
 				<div class=" self-center font-medium">{$i18n.t('Sign Out')}</div>
 			</button>
 
-			{#if $activeUserCount}
+			<!-- {#if $activeUserCount}
 				<hr class=" dark:border-gray-800 my-1.5 p-0" />
 
 				<Tooltip
@@ -194,7 +194,7 @@
 						</div>
 					</div>
 				</Tooltip>
-			{/if}
+			{/if} -->
 
 			<!-- <DropdownMenu.Item class="flex items-center px-3 py-2 text-sm  font-medium">
 				<div class="flex items-center">Profile</div>

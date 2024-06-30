@@ -79,9 +79,7 @@ for source in log_sources:
 
 log.setLevel(SRC_LOG_LEVELS["CONFIG"])
 
-WEBUI_NAME = os.environ.get("WEBUI_NAME", "Open WebUI")
-if WEBUI_NAME != "Open WebUI":
-    WEBUI_NAME += " (Open WebUI)"
+WEBUI_NAME = os.environ.get("WEBUI_NAME", "Sia : Tech Support AI Agent")
 
 WEBUI_URL = os.environ.get("WEBUI_URL", "http://localhost:3000")
 
@@ -683,30 +681,31 @@ DEFAULT_PROMPT_SUGGESTIONS = PersistentConfig(
     "ui.prompt_suggestions",
     [
         {
-            "title": ["Help me study", "vocabulary for a college entrance exam"],
+            "title": ["General", "What all things can you help me with ?"],
             "content": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option.",
         },
         {
-            "title": ["Give me ideas", "for what to do with my kids' art"],
+            "title": ["Performance", "My PC is running slow, can you help ?"],
             "content": "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter.",
         },
         {
-            "title": ["Tell me a fun fact", "about the Roman Empire"],
+            "title": ["Setup", "How to set up my work email on my iPhone ?"],
             "content": "Tell me a random fun fact about the Roman Empire",
         },
         {
-            "title": ["Show me a code snippet", "of a website's sticky header"],
+            "title": ["Troubleshooting", "The webcam of my Lenovo Ideapad Slim3 is not working properly, need help ?"],
             "content": "Show me a code snippet of a website's sticky header in CSS and JavaScript.",
         },
         {
-            "title": [
-                "Explain options trading",
-                "if I'm familiar with buying and selling stocks",
-            ],
+            "title": ["Recommendation","My laptop battery drains quickly, how can I improve battery life ?"],
             "content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
         },
         {
-            "title": ["Overcome procrastination", "give me tips"],
+            "title": ["Help", "How can i recover deleted files from my windows 10 machine ?"],
+            "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
+        },
+        {
+            "title": ["Comparison", "I am looking for high speed internet plan, compare Airtel Xtreme Fibore and Jio Fibre plans for me ?"],
             "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
         },
     ],

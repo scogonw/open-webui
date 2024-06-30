@@ -32,12 +32,12 @@
 	});
 </script>
 
-{#if prompts.length > 0}
+<!-- {#if prompts.length > 0}
 	<div class="mb-2 flex gap-1 text-sm font-medium items-center text-gray-400 dark:text-gray-600">
 		<Bolt />
 		{$i18n.t('Suggested')}
 	</div>
-{/if}
+{/if} -->
 
 <div class="w-full">
 	<div
@@ -69,12 +69,12 @@
 						{/if}
 					</div>
 
-					<div class="w-full flex justify-between">
-						<div
+					<div class="w-full flex justify-end">
+						<!-- <div
 							class="text-xs text-gray-400 group-hover:text-gray-500 dark:text-gray-600 dark:group-hover:text-gray-500 transition self-center"
 						>
 							{$i18n.t('Prompt')}
-						</div>
+						</div> -->
 
 						<div
 							class="self-end p-1 rounded-lg text-gray-300 group-hover:text-gray-800 dark:text-gray-700 dark:group-hover:text-gray-100 transition"
