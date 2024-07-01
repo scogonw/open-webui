@@ -40,6 +40,7 @@
 	import Headphone from '../icons/Headphone.svelte';
 	import VoiceRecording from './MessageInput/VoiceRecording.svelte';
 	import { transcribeAudio } from '$lib/apis/audio';
+	import Call from '../icons/Call.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -961,7 +962,8 @@
 													}
 												}}
 											>
-												<Headphone className="size-6" />
+												<!-- <Headphone className="size-6" /> -->
+												<Call className="size-6" />
 											</button>
 										</Tooltip>
 									</div>
