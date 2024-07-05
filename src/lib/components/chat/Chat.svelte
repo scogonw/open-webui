@@ -73,7 +73,7 @@
 	let processing = '';
 	let messagesContainerElement: HTMLDivElement;
 
-	let showModelSelector = true;
+	let showModelSelector = false;
 
 	let selectedModels = [''];
 	let atSelectedModel: Model | undefined;

@@ -221,7 +221,7 @@
 	id="sidebar"
 	class="h-screen max-h-[100dvh] min-h-screen select-none {$showSidebar
 		? 'md:relative w-[260px]'
-		: '-translate-x-[260px] w-[0px]'} bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-r-2xl
+		: '-translate-x-[260px] w-[0px]'} bg-white border text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-r-2xl
         "
 	data-state={$showSidebar}
 >
@@ -230,10 +230,10 @@
 			? ''
 			: 'invisible'}"
 	>
-		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400">
+		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 ">
 			<a
 				id="sidebar-new-chat-button"
-				class="flex flex-1 justify-between rounded-xl px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+				class="flex flex-1 justify-center rounded-2xl px-2 py-2 bg-black border-none hover:scale-105 dark:hover:bg-gray-850 transition-all duration-300"
 				href="/"
 				draggable="false"
 				on:click={async () => {
@@ -248,18 +248,18 @@
 					}, 0);
 				}}
 			>
-				<div class="self-center mx-1.5">
+				<div class="self-center mx-0.5">
 					<img
 						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/favicon.png"
+						src="{WEBUI_BASE_URL}/static/plus-icon.svg"
 						class=" size-6 -translate-x-1.5 rounded-full"
 						alt="logo"
 					/>
 				</div>
-				<div class=" self-center font-medium text-sm text-gray-850 dark:text-white">
+				<div class=" self-center font-medium text-base text-white dark:text-white">
 					{$i18n.t('New Chat')}
 				</div>
-				<div class="self-center ml-auto">
+				<!-- <div class="self-center ml-auto">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 20 20"
@@ -273,7 +273,7 @@
 							d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
 						/>
 					</svg>
-				</div>
+				</div> -->
 			</a>
 
 			<button

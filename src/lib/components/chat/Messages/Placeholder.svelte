@@ -33,42 +33,46 @@
 </script>
 
 {#key mounted}
-	<div class="m-auto w-full max-w-6xl px-8 lg:px-20 pb-10">
-		<div class="flex justify-start">
-			<div class="flex -space-x-4 mb-1" in:fade={{ duration: 200 }}>
-				{#each models as model, modelIdx}
-					<button
-						on:click={() => {
-							selectedModelIdx = modelIdx;
-						}}
-					>
-						<Tooltip
-							content={marked.parse(
-								sanitizeResponseContent(models[selectedModelIdx]?.info?.meta?.description ?? '')
-							)}
-							placement="right"
-						>
-							<img
-								crossorigin="anonymous"
-								src={model?.info?.meta?.profile_image_url ??
-									($i18n.language === 'dg-DG'
-										? `/doge.png`
-										: `${WEBUI_BASE_URL}/static/favicon.png`)}
-								class=" size-[2.7rem] rounded-full border-[1px] border-gray-200 dark:border-none"
-								alt="logo"
-								draggable="false"
-							/>
-						</Tooltip>
-					</button>
-				{/each}
-			</div>
-		</div>
-
+	<div
+		class="m-auto w-full max-w-6xl h-full px-8 lg:px-20 pb-10 flex flex-col justify-between "
+	>
 		<div
-			class=" mt-2 mb-4 text-3xl text-gray-800 dark:text-gray-100 font-semibold text-left flex items-center gap-4"
+			class=" mt-2 mb-4 text-3xl text-gray-800 dark:text-gray-100 font-semibold text-left flex flex-col items-start gap-4"
 		>
+			<div class="flex justify-start">
+				<div class="flex -space-x-4 mb-1" in:fade={{ duration: 200 }}>
+					{#each models as model, modelIdx}
+						<button
+							on:click={() => {
+								selectedModelIdx = modelIdx;
+							}}
+						>
+							<Tooltip
+								content={marked.parse(
+									sanitizeResponseContent(models[selectedModelIdx]?.info?.meta?.description ?? '')
+								)}
+								placement="right"
+							>
+								<img
+									crossorigin="anonymous"
+									src={model?.info?.meta?.profile_image_url ??
+										($i18n.language === 'dg-DG'
+											? `/doge.png`
+											: `${WEBUI_BASE_URL}/static/favicon.png`)}
+									class=" size-[5rem] rounded-full"
+									alt="logo"
+									draggable="false"
+								/>
+							</Tooltip>
+						</button>
+					{/each}
+				</div>
+			</div>
 			<div>
-				<div class=" capitalize line-clamp-1 bg-clip-text text-transparent bg-gradient-to-r from-[#5083EE] via-[#B76CA1] via-[#BB6B9B] to-[#D56676]" in:fade={{ duration: 200 }}>
+				<div
+					class=" capitalize line-clamp-1 bg-clip-text text-5xl font-bold text-transparent bg-gradient-to-r from-[#0051AF] via-[#EB00FF] to-[#FF6565]"
+					in:fade={{ duration: 200 }}
+				>
 					{#if models[selectedModelIdx]?.info}
 						{models[selectedModelIdx]?.info?.name}
 					{:else}
@@ -86,7 +90,7 @@
 							)}
 						</div>
 						{#if models[selectedModelIdx]?.info?.meta?.user}
-							<div class="mt-0.5 text-sm font-normal text-gray-400 dark:text-gray-500">
+							<div class="mt-0.5 text-sm text-[#818181] dark:text-[#818181] font-semibold">
 								By
 								{#if models[selectedModelIdx]?.info?.meta?.user.community}
 									<a
