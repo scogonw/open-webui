@@ -10,7 +10,8 @@
 		tags,
 		showSidebar,
 		mobile,
-		showArchivedChats
+		showArchivedChats,
+		theme
 	} from '$lib/stores';
 	import { onMount, getContext, tick } from 'svelte';
 
@@ -33,6 +34,15 @@
 	import UserMenu from './Sidebar/UserMenu.svelte';
 	import ChatItem from './Sidebar/ChatItem.svelte';
 	import DeleteConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
+	import MyAccount from '../icons/MyAccount.svelte';
+	import DarkMode from '../icons/DarkMode.svelte';
+	import Logout from '../icons/Logout.svelte';
+	import Plus from '../icons/Plus.svelte';
+	import Home from '../icons/Home.svelte';
+	import Teams from '../icons/Teams.svelte';
+	import KnowledgeHub from '../icons/KnowledgeHub.svelte';
+	import { fade } from 'svelte/transition';
+	import LightMode from '../icons/LightMode.svelte';
 
 	const BREAKPOINT = 768;
 
@@ -47,6 +57,7 @@
 	let showDeleteConfirm = false;
 	let showDropdown = false;
 	let filteredChatList = [];
+	let themes = ['dark', 'light', 'rose-pine dark', 'rose-pine-dawn light', 'oled-dark'];
 
 	$: filteredChatList = $chats.filter((chat) => {
 		if (search === '') {
@@ -184,6 +195,44 @@
 			await chats.set(await getChatList(localStorage.token));
 		}
 	};
+
+	const applyTheme = (_theme: string) => {
+		let themeToApply = _theme === 'oled-dark' ? 'dark' : _theme;
+
+		if (_theme === 'system') {
+			themeToApply = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
+
+		if (themeToApply === 'dark' && !_theme.includes('oled')) {
+			document.documentElement.style.setProperty('--color-gray-900', '#171717');
+			document.documentElement.style.setProperty('--color-gray-950', '#0d0d0d');
+		}
+
+		themes
+			.filter((e) => e !== themeToApply)
+			.forEach((e) => {
+				e.split(' ').forEach((e) => {
+					document.documentElement.classList.remove(e);
+				});
+			});
+
+		themeToApply.split(' ').forEach((e) => {
+			document.documentElement.classList.add(e);
+		});
+
+		console.log(_theme);
+	};
+
+	const themeChangeHandler = (_theme: string) => {
+		theme.set(_theme);
+		localStorage.setItem('theme', _theme);
+		if (_theme.includes('oled')) {
+			document.documentElement.style.setProperty('--color-gray-900', '#000000');
+			document.documentElement.style.setProperty('--color-gray-950', '#000000');
+			document.documentElement.classList.add('dark');
+		}
+		applyTheme(_theme);
+	};
 </script>
 
 <ArchivedChatsModal
@@ -221,7 +270,7 @@
 	id="sidebar"
 	class="h-screen max-h-[100dvh] min-h-screen select-none {$showSidebar
 		? 'md:relative w-[260px]'
-		: '-translate-x-[260px] w-[0px]'} bg-white border text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-r-2xl
+		: '-translate-x-[260px] w-[0px]'} bg-white border-r-2 text-gray-900 dark:bg-gray-950 dark:text-gray-200 dark:border-gray-850 text-sm transition fixed z-50 top-0 left-0
         "
 	data-state={$showSidebar}
 >
@@ -230,10 +279,10 @@
 			? ''
 			: 'invisible'}"
 	>
-		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 ">
+		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400" in:fade={{ duration: 200, delay: 200}}>
 			<a
 				id="sidebar-new-chat-button"
-				class="flex flex-1 justify-center rounded-2xl px-2 py-2 bg-black border-none hover:scale-105 dark:hover:bg-gray-850 transition-all duration-300"
+				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-white dark:hover:bg-gray-400  transition-all duration-300"
 				href="/"
 				draggable="false"
 				on:click={async () => {
@@ -248,15 +297,10 @@
 					}, 0);
 				}}
 			>
-				<div class="self-center mx-0.5">
-					<img
-						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/plus-icon.svg"
-						class=" size-6 -translate-x-1.5 rounded-full"
-						alt="logo"
-					/>
+				<div class="self-center mx-1">
+					<Plus className="size-4 stroke-white dark:stroke-black" strokeWidth="2"/>
 				</div>
-				<div class=" self-center font-medium text-base text-white dark:text-white">
+				<div class=" self-center font-medium text-base text-white dark:text-black">
 					{$i18n.t('New Chat')}
 				</div>
 				<!-- <div class="self-center ml-auto">
@@ -277,7 +321,7 @@
 			</a>
 
 			<button
-				class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+				class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition"
 				on:click={() => {
 					showSidebar.set(!$showSidebar);
 				}}
@@ -301,10 +345,10 @@
 			</button>
 		</div>
 
-		{#if $user?.role === 'admin'}
+		<!-- {#if $user?.role === 'admin'}
 			<div class="px-2.5 flex justify-center text-gray-800 dark:text-gray-200">
 				<a
-					class="flex-grow flex space-x-3 rounded-xl px-2.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+					class="flex-grow flex space-x-3 rounded-xl px-2.5 py-2 hover:bg-[#F3F6FD] dark:hover:bg-gray-900 transition"
 					href="/workspace"
 					on:click={() => {
 						selectedChatId = null;
@@ -338,10 +382,45 @@
 					</div>
 				</a>
 			</div>
-		{/if}
+		{/if} -->
 
-		<div class="relative flex flex-col flex-1 overflow-y-auto">
-			{#if !($settings.saveChatHistory ?? true)}
+		<div class="relative flex flex-col flex-1 overflow-y-auto px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200, delay: 200}}>
+
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					
+				}}
+			>
+				<div class=" self-center mr-3">
+					<Home className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Home</div>
+			</button>
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					
+				}}
+			>
+				<div class=" self-center mr-3">
+					<Teams className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Teams</div>
+			</button>
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					
+				}}
+			>
+				<div class=" self-center mr-3">
+					<KnowledgeHub className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Knowledge Hub</div>
+			</button>
+
+			<!-- {#if !($settings.saveChatHistory ?? true)}
 				<div class="absolute z-40 w-full h-full bg-gray-50/90 dark:bg-black/90 flex justify-center">
 					<div class=" text-left px-5 py-2">
 						<div class=" font-medium">{$i18n.t('Chat History is off for this browser.')}</div>
@@ -356,7 +435,7 @@
 
 						<div class="mt-3">
 							<button
-								class="flex justify-center items-center space-x-1.5 px-3 py-2.5 rounded-lg text-xs bg-gray-100 hover:bg-gray-200 transition text-gray-800 font-medium w-full"
+								class="flex justify-center items-center space-x-1.5 px-3 py-2.5 rounded-lg text-xs bg-[#F3F6FD] hover:bg-gray-200 transition text-gray-800 font-medium w-full"
 								type="button"
 								on:click={() => {
 									saveSettings({
@@ -382,9 +461,9 @@
 						</div>
 					</div>
 				</div>
-			{/if}
+			{/if} -->
 
-			<div class="px-2 mt-0.5 mb-2 flex justify-center space-x-2">
+			<!-- <div class="px-2 mt-0.5 mb-2 flex justify-center space-x-2">
 				<div class="flex w-full rounded-xl" id="chat-search">
 					<div class="self-center pl-3 py-2 rounded-l-xl bg-transparent">
 						<svg
@@ -395,7 +474,7 @@
 						>
 							<path
 								fill-rule="evenodd"
-								d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+								d="M9 3.5a5.5 5[#F3F6FD] 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
 								clip-rule="evenodd"
 							/>
 						</svg>
@@ -410,9 +489,9 @@
 						}}
 					/>
 				</div>
-			</div>
+			</div> -->
 
-			{#if $tags.length > 0}
+			<!-- {#if $tags.length > 0}
 				<div class="px-2.5 mb-2 flex gap-1 flex-wrap">
 					<button
 						class="px-2.5 text-xs font-medium bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 transition rounded-full"
@@ -449,7 +528,7 @@
 								: 'pt-5'} pb-0.5"
 						>
 							{$i18n.t(chat.time_range)}
-							<!-- localisation keys for time_range to be recognized from the i18next parser (so they don't get automatically removed):
+							localisation keys for time_range to be recognized from the i18next parser (so they don't get automatically removed):
 							{$i18n.t('Today')}
 							{$i18n.t('Yesterday')}
 							{$i18n.t('Previous 7 days')}
@@ -466,7 +545,7 @@
 							{$i18n.t('October')}
 							{$i18n.t('November')}
 							{$i18n.t('December')}
-							-->
+							
 						</div>
 					{/if}
 
@@ -490,13 +569,66 @@
 						}}
 					/>
 				{/each}
-			</div>
+			</div> -->
 		</div>
 
-		<div class="px-2.5">
+		<div class="px-2.5 py-2.5 border-t-[0.5px] dark:border-gray-850" in:fade={{ duration: 200, delay: 200}}>
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					
+				}}
+			>
+				<div class=" self-center mr-3">
+					<MyAccount className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">My Account</div>
+			</button>
+
+			{#if $theme !== 'dark'}
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					themeChangeHandler('dark')
+				}}
+			>
+				<div class=" self-center mr-3">
+					<DarkMode className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Dark Mode</div>
+			</button>
+			{/if}
+
+			{#if $theme === 'dark'}
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					themeChangeHandler('light')
+				}}
+			>
+				<div class=" self-center mr-3">
+					<LightMode className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Light Mode</div>
+			</button>
+			{/if}
+
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				on:click={() => {
+					localStorage.removeItem('token');
+					location.href = '/auth';
+				}}
+			>
+				<div class=" self-center mr-3">
+					<Logout	className="size-5 fill-black dark:fill-white"/>
+				</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Log Out</div>
+			</button>
+
 			<!-- <hr class=" border-gray-900 mb-1 w-full" /> -->
 
-			<div class="flex flex-col">
+			<!-- <div class="flex flex-col">
 				{#if $user !== undefined}
 					<UserMenu
 						role={$user.role}
@@ -507,7 +639,7 @@
 						}}
 					>
 						<button
-							class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+							class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-900 transition"
 							on:click={() => {
 								showDropdown = !showDropdown;
 							}}
@@ -523,7 +655,7 @@
 						</button>
 					</UserMenu>
 				{/if}
-			</div>
+			</div> -->
 		</div>
 	</div>
 
@@ -544,7 +676,7 @@
 				}}
 				><span class="" data-state="closed"
 					><div
-						class="flex h-[72px] w-8 items-center justify-center opacity-50 group-hover:opacity-100 transition"
+						class="flex h-[72px] w-8 items-center justify-center opacity-50 group-hover:opa[#F3F6FD] transition"
 					>
 						<div class="flex h-6 w-6 flex-col items-center">
 							<div

@@ -18,7 +18,7 @@
 		} else if (size === 'md') {
 			return 'w-[48rem]';
 		} else {
-			return 'w-[56rem]';
+			return size;
 		}
 	};
 
@@ -61,7 +61,7 @@
 		}}
 	>
 		<div
-			class=" m-auto rounded-2xl max-w-full {sizeToWidth(
+			class=" m-auto rounded-xl max-w-full {sizeToWidth(
 				size
 			)} mx-2 bg-gray-50 dark:bg-gray-900 shadow-3xl"
 			in:flyAndScale
