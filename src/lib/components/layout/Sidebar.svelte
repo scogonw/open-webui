@@ -384,7 +384,7 @@
 			</div>
 		{/if} -->
 
-		<div class="relative flex flex-col flex-1 overflow-y-auto px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200, delay: 200}}>
+		<div class="relative flex flex-col flex-1 overflow-y-auto px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200}}>
 
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
@@ -517,9 +517,9 @@
 						</button>
 					{/each}
 				</div>
-			{/if}
+			{/if} -->
 
-			<div class="pl-2 my-2 flex-1 flex flex-col space-y-1 overflow-y-auto scrollbar-hidden">
+			<!-- <div class="pl-2 my-2 flex-1 flex flex-col space-y-1 overflow-y-auto scrollbar-hidden">
 				{#each filteredChatList as chat, idx}
 					{#if idx === 0 || (idx > 0 && chat.time_range !== filteredChatList[idx - 1].time_range)}
 						<div
@@ -570,7 +570,7 @@
 					/>
 				{/each}
 			</div> -->
-		</div>
+		</div> 
 
 		<div class="px-2.5 py-2.5 border-t-[0.5px] dark:border-gray-850" in:fade={{ duration: 200, delay: 200}}>
 			<button

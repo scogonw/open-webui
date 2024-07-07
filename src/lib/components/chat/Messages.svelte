@@ -14,6 +14,9 @@
 	import { copyToClipboard, findWordIndices } from '$lib/utils';
 	import CompareMessages from './Messages/CompareMessages.svelte';
 	import { stringify } from 'postcss';
+	import History from '../icons/History.svelte';
+	import Sheet from '../common/Sheet.svelte';
+	import HistorySheet from '../layout/History/HistorySheet.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -252,9 +255,29 @@
 			history: history
 		});
 	};
+
+	let isSheetOpen = false;
+	console.log($mobile, 'mobile');
 </script>
 
-<div class="h-full flex">
+<div class="h-full flex overflow-hidden relative">
+	{#if mobile}
+		<button
+			class="absolute -right-14 top-1/2 -translate-y-1/2"
+			on:click={(e) => {
+				e.preventDefault();
+				console.log(isSheetOpen);
+				isSheetOpen = !isSheetOpen;
+			}}
+		>
+			<History
+				className="size-36 stroke-none dark:fill-gray-850 cursor-pointer hover:scale-110 transition-all"
+			/>
+		</button>
+		<Sheet bind:open={isSheetOpen}>
+			<HistorySheet />
+		</Sheet>
+	{/if}
 	{#if messages.length == 0}
 		<Placeholder
 			modelIds={selectedModels}

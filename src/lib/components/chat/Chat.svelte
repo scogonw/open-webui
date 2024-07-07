@@ -130,7 +130,6 @@
 		const onMessageHandler = async (event) => {
 			if (event.origin === window.origin) {
 				// Replace with your iframe's origin
-				console.log('Message received from iframe:', event.data);
 				if (event.data.type === 'input:prompt') {
 					console.log(event.data.text);
 

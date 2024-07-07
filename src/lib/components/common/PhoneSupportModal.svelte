@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Cross from '../icons/Cross.svelte';
 	import PhoneCallSupport from '../icons/PhoneCallSupport.svelte';
+	import WebCall from '../icons/WebCall.svelte';
 	import WhatsappQr from '../icons/WhatsappQR.svelte';
 	import Modal from './Modal.svelte';
 
@@ -28,7 +29,7 @@
 				</button>
 			</div>
 			<div class="p-4 flex flex-col items-center gap-2 dark:text-white">
-				<PhoneCallSupport className="size-20 md:size-40" />
+				<WebCall className="size-20 md:size-40" />
 				<h1 class="font-bold text-3xl">Web Call Support</h1>
 				<p class="text-center">Thank you for visiting us! Add your name to our newsletter!</p>
 				<button class="bg-[#02C27F] text-white rounded-xl w-full p-2 md:px-16 group">

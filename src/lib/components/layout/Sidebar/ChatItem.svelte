@@ -88,7 +88,7 @@
 				? 'bg-gray-200 dark:bg-gray-900'
 				: selected
 				? 'bg-gray-100 dark:bg-gray-950'
-				: ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
+				: ' group-hover:hover:bg-[#F3F6FD] dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
 			href="/c/{chat.id}"
 			on:click={() => {
 				dispatch('select');
@@ -110,8 +110,8 @@
 			on:focus={(e) => {}}
 			draggable="false"
 		>
-			<div class=" flex self-center flex-1 w-full">
-				<div class=" text-left self-center overflow-hidden w-full h-[20px]">
+			<div class=" flex  flex-1 w-full">
+				<div class="flex justify-start items-center overflow-hidden w-full h-[20px]">
 					{chat.title}
 				</div>
 			</div>

@@ -881,7 +881,7 @@
 								/>
 
 								<div class="self-end mb-2 flex space-x-1 mr-1">
-									{#if messages.length == 0 || messages.at(-1).done == true}
+									<!-- {#if messages.length == 0 || messages.at(-1).done == true}
 										<Tooltip content={$i18n.t('Record voice')}>
 											<button
 												id="voice-input-button"
@@ -924,7 +924,7 @@
 												</svg>
 											</button>
 										</Tooltip>
-									{/if}
+									{/if} -->
 								</div>
 							</div>
 						</div>

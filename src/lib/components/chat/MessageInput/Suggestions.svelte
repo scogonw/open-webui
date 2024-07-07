@@ -41,42 +41,43 @@
 
 <div class="w-full">
 	<div
-		class="relative w-full flex gap-2 snap-x snap-mandatory md:snap-none overflow-x-auto tabs"
+		class="relative w-full grid grid-flow-col grid-rows-2 gap-2 snap-x snap-mandatory md:snap-none overflow-x-auto tabs"
 		id="suggestions-container"
 	>
 		{#each prompts as prompt, promptIdx}
 			<div class="snap-center shrink-0">
 				<button
-					class="flex flex-col flex-1 shrink-0 w-64 justify-between h-36 p-5 px-6 bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 rounded-3xl transition group"
+					class="flex items-center shrink-0 w-64 md:w-96 justify-between h-12 p-1 px-4 border border-[#0000001A] hover:bg-[#F3F6FD] hover:border-none dark:bg-gray-850 dark:hover:bg-gray-800 rounded-xl transition group"
 					on:click={() => {
 						submitPrompt(prompt.content);
 					}}
 				>
 					<div class="flex flex-col text-left">
-						{#if prompt.title && prompt.title[0] !== ''}
-							<div
+						<!-- {#if prompt.title && prompt.title[0] !== ''} -->
+						{#if prompt.content !== ''}
+							<!-- <div
 								class="  font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition"
 							>
 								{prompt.title[0]}
-							</div>
-							<div class="text-sm text-gray-600 font-normal line-clamp-2">{prompt.title[1]}</div>
-						{:else}
+							</div> -->
+							<div class="text-sm text-[#404040] font-medium dark:text-white line-clamp-1">{prompt.content}</div>
+						<!-- {:else}
 							<div
 								class="  text-sm font-medium dark:text-gray-300 dark:group-hover:text-gray-100 transition line-clamp-2"
 							>
 								{prompt.content}
-							</div>
+							</div> -->
 						{/if}
 					</div>
 
-					<div class="w-full flex justify-end">
+					<!-- <div class="w-full flex justify-end"> -->
 						<!-- <div
 							class="text-xs text-gray-400 group-hover:text-gray-500 dark:text-gray-600 dark:group-hover:text-gray-500 transition self-center"
 						>
 							{$i18n.t('Prompt')}
 						</div> -->
 
-						<div
+						<!-- <div
 							class="self-end p-1 rounded-lg text-gray-300 group-hover:text-gray-800 dark:text-gray-700 dark:group-hover:text-gray-100 transition"
 						>
 							<svg
@@ -91,8 +92,8 @@
 									clip-rule="evenodd"
 								/>
 							</svg>
-						</div>
-					</div>
+						</div> -->
+					<!-- </div> -->
 				</button>
 			</div>
 		{/each}
@@ -102,7 +103,7 @@
 			class="shrink-0 w-80 h-40 rounded-lg shadow-xl bg-white"
 			src="https://images.unsplash.com/photo-1604999565976-8913ad2ddb7c?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=320&amp;h=160&amp;q=80"
 		/>
-	</div> -->
+		</div> -->
 	</div>
 </div>
 

@@ -41,7 +41,7 @@
 
 {#key mounted}
 	<div
-		class="m-auto w-full max-w-6xl h-full px-8 lg:px-20 pb-10 pt-10 flex flex-col justify-between"
+		class="m-auto w-full max-w-6xl h-full px-8 lg:px-20  pt-10 flex flex-col justify-between"
 	>
 		<div
 			class=" mt-2 mb-4 text-3xl text-gray-800 dark:text-gray-100 font-semibold text-left flex flex-col items-start gap-4"
@@ -122,7 +122,7 @@
 				</div>
 				<div class="flex flex-col md:flex-row gap-4 mt-2 md:mt-8 w-full">
 					<button
-						class=" flex justify-center rounded-xl py-3 px-3.5 w-64 bg-[#F3F6FD] dark:bg-gray-850 dark:hover:bg-gray-850 transition group"
+						class=" flex justify-center rounded-xl py-3 px-3.5 w-64 bg-[#F3F6FD] dark:bg-gray-850 dark:hover:bg-gray-800 transition group"
 						on:click={() => {
 							showWhatsAppModal = true;
 						}}
@@ -136,7 +136,7 @@
 					</button>
 
 					<button
-						class=" flex justify-center rounded-xl py-3 px-3.5 w-64 bg-[#F3F6FD] dark:bg-gray-850 dark:hover:bg-gray-850 transition group"
+						class=" flex justify-center rounded-xl py-3 px-3.5 w-64 bg-[#F3F6FD] dark:bg-gray-850 dark:hover:bg-gray-800 transition group"
 						on:click={() => {
 								showPhoneCallModal = true;
 						}}
@@ -154,12 +154,12 @@
 		<WhatsAppModal bind:show={showWhatsAppModal} />
 		<PhoneSupportModal bind:show={showPhoneCallModal} />
 
-		<!-- <div class=" w-full" in:fade={{ duration: 200, delay: 300 }}>
+		<div class=" w-full" in:fade={{ duration: 200, delay: 300 }}>
 			<Suggestions
 				suggestionPrompts={models[selectedModelIdx]?.info?.meta?.suggestion_prompts ??
 					$config.default_prompt_suggestions}
 				{submitPrompt}
 			/>
-		</div> -->
+		</div>
 	</div>
 {/key}
