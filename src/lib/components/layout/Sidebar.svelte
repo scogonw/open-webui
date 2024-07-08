@@ -389,7 +389,7 @@
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
 				on:click={() => {
-					
+					goto('/');
 				}}
 			>
 				<div class=" self-center mr-3">
@@ -400,7 +400,7 @@
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
 				on:click={() => {
-					
+					goto('/teams');
 				}}
 			>
 				<div class=" self-center mr-3">
@@ -411,7 +411,7 @@
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
 				on:click={() => {
-					
+					goto('knowledge');
 				}}
 			>
 				<div class=" self-center mr-3">

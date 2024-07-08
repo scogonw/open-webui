@@ -41,7 +41,7 @@
 
 <div class="w-full">
 	<div
-		class="relative w-full grid grid-flow-col grid-rows-2 gap-2 snap-x snap-mandatory md:snap-none overflow-x-auto tabs"
+		class="relative w-full grid grid-flow-col grid-rows-1 md:grid-rows-2 gap-2 snap-x snap-mandatory md:snap-none overflow-x-auto tabs"
 		id="suggestions-container"
 	>
 		{#each prompts as prompt, promptIdx}

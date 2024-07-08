@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { config, models, settings, showCallOverlay } from '$lib/stores';
 	import { onMount, tick, getContext } from 'svelte';
+	import { Room, RoomEvent } from 'livekit-client';
 
 	import {
 		blobToFile,
@@ -15,6 +16,7 @@
 
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import VideoInputMenu from './CallOverlay/VideoInputMenu.svelte';
+	import { createToken } from '$lib/apis/livekit';
 
 	const i18n = getContext('i18n');
 
@@ -49,6 +51,9 @@
 
 	let videoInputDevices = [];
 	let selectedVideoInputDeviceId = null;
+
+	let room = new Room();
+	const NEXT_PUBLIC_LIVEKIT_URL = 'wss://sia-5hbxjjlj.livekit.cloud';
 
 	const getVideoInputDevices = async () => {
 		const devices = await navigator.mediaDevices.enumerateDevices();
@@ -508,10 +513,15 @@
 		console.log(`Audio monitoring and playing stopped for message ID ${id}`);
 	};
 
+	const handleCleanUp = async () => {
+		await room?.localParticipant?.setMicrophoneEnabled(false);
+		await room.disconnect();
+	};
+
 	onMount(async () => {
 		model = $models.find((m) => m.id === modelId);
 
-		startRecording();
+		// startRecording();
 
 		const chatStartHandler = async (e) => {
 			const { id } = e.detail;
@@ -567,6 +577,36 @@
 			chatStreaming = false;
 		};
 
+		const token = await createToken();
+
+		console.log('token', token);
+
+		room.on(RoomEvent.ParticipantConnected, (remote) => {
+			console.log(remote);
+		});
+
+		room.on(RoomEvent.TrackPublished, (publication, participant) => {
+			console.log(publication, participant);
+		});
+
+		room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+			const audioElement = document.getElementById('audioElement');
+			track.attach(audioElement);
+		});
+
+		room.on(RoomEvent.TranscriptionReceived, (transcription, participant, publication) => {
+			console.log(transcription);
+		});
+
+		room.on(RoomEvent.ConnectionStateChanged, async (state) => {
+			console.log('state', state);
+			if (state === 'connected') {
+				await room?.localParticipant?.setMicrophoneEnabled(true);
+			}
+		});
+
+		await room.connect(NEXT_PUBLIC_LIVEKIT_URL, token);
+
 		eventTarget.addEventListener('chat:start', chatStartHandler);
 		eventTarget.addEventListener('chat', chatEventHandler);
 		eventTarget.addEventListener('chat:finish', chatFinishHandler);
@@ -575,6 +615,10 @@
 			eventTarget.removeEventListener('chat:start', chatStartHandler);
 			eventTarget.removeEventListener('chat', chatEventHandler);
 			eventTarget.removeEventListener('chat:finish', chatFinishHandler);
+
+			await room?.localParticipant?.setMicrophoneEnabled(false);
+			await room.disconnect();
+			console.log(room);
 
 			audioAbortController.abort();
 			await tick();
@@ -875,6 +919,7 @@
 						<button
 							class=" p-3 rounded-full bg-gray-50 dark:bg-gray-900"
 							on:click={async () => {
+								handleCleanUp();
 								showCallOverlay.set(false);
 							}}
 							type="button"

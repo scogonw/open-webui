@@ -67,6 +67,8 @@
 		"idb": "^7.1.1",
 		"js-sha256": "^0.10.1",
 		"katex": "^0.16.9",
+		"livekit-client": "^2.3.1",
+		"livekit-server-sdk": "^2.5.1",
 		"marked": "^9.1.0",
 		"mermaid": "^10.9.1",
 		"pyodide": "^0.26.1",
