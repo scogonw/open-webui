@@ -38,6 +38,7 @@
 	import ChangelogModal from '$lib/components/ChangelogModal.svelte';
 	import AccountPending from '$lib/components/layout/Overlay/AccountPending.svelte';
 	import { getFunctions } from '$lib/apis/functions';
+	import { page } from '$app/stores';
 
 	const i18n = getContext('i18n');
 
@@ -50,8 +51,10 @@
 	};
 
 	onMount(async () => {
-		if ($user === undefined) {
-			await goto('/auth');
+		if (!localStorage.token && !$page.url.pathname.startsWith('/home')) {
+			await goto('/home');
+		} else if ($user === undefined) {
+			await goto('/home');
 		} else if (['user', 'admin'].includes($user.role)) {
 			try {
 				// Check if IndexedDB exists

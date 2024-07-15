@@ -275,14 +275,14 @@
 	data-state={$showSidebar}
 >
 	<div
-		class="py-2.5 my-auto flex flex-col justify-between h-screen max-h-[100dvh] w-[260px] z-50 {$showSidebar
+		class="pt-2.5 my-auto flex flex-col justify-between h-screen max-h-[100dvh] w-[260px] z-50 {$showSidebar
 			? ''
 			: 'invisible'}"
 	>
 		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400" in:fade={{ duration: 200, delay: 200}}>
 			<a
 				id="sidebar-new-chat-button"
-				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-white dark:hover:bg-gray-400  transition-all duration-300"
+				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-gray-850 dark:hover:bg-gray-800  transition-all"
 				href="/"
 				draggable="false"
 				on:click={async () => {
@@ -298,9 +298,9 @@
 				}}
 			>
 				<div class="self-center mx-1">
-					<Plus className="size-4 stroke-white dark:stroke-black" strokeWidth="2"/>
+					<Plus className="size-4 stroke-white" strokeWidth="2"/>
 				</div>
-				<div class=" self-center font-medium text-base text-white dark:text-black">
+				<div class=" self-center font-medium text-base text-white ">
 					{$i18n.t('New Chat')}
 				</div>
 				<!-- <div class="self-center ml-auto">
@@ -384,7 +384,7 @@
 			</div>
 		{/if} -->
 
-		<div class="relative flex flex-col flex-1 overflow-y-auto px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200}}>
+		<div class="relative flex flex-col flex-1 overflow-y-auto 		px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200}}>
 
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
@@ -411,7 +411,7 @@
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
 				on:click={() => {
-					goto('knowledge');
+					goto('/knowledge');
 				}}
 			>
 				<div class=" self-center mr-3">
