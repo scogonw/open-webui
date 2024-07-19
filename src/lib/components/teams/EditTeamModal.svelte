@@ -80,7 +80,7 @@
 		<div
 			class="flex flex-col p-5 gap-4 bg-white dark:bg-gray-850 rounded-lg shadow-lg dark:text-white"
 		>
-			<h1 class="text-lg font-medium dark:text-white">Create New Team</h1>
+			<h1 class="text-lg font-medium dark:text-white">Edit Team</h1>
 			<label for="team-name" class="text-sm font-normal text-[#334158] dark:text-white"
 				>Team Name</label
 			>

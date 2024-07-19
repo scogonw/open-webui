@@ -3,6 +3,7 @@
 	import { marked } from 'marked';
 
 	import tippy from 'tippy.js';
+	import 'tippy.js/animations/shift-toward-subtle.css';
 
 	export let placement = 'top';
 	export let content = `I'm a tooltip!`;
@@ -17,6 +18,7 @@
 			tooltipInstance.setContent(content);
 		} else {
 			tooltipInstance = tippy(tooltipElement, {
+				animation:'shift-toward-subtle',
 				content: content,
 				placement: placement,
 				allowHTML: true,

@@ -43,6 +43,8 @@
 	import KnowledgeHub from '../icons/KnowledgeHub.svelte';
 	import { fade } from 'svelte/transition';
 	import LightMode from '../icons/LightMode.svelte';
+	import { page } from '$app/stores';
+	console.log($page);
 
 	const BREAKPOINT = 768;
 
@@ -233,6 +235,10 @@
 		}
 		applyTheme(_theme);
 	};
+
+	$: isHomePage = $page.url.pathname === '/';
+	$: isTeamsPage = $page.url.pathname.startsWith('/teams');
+	$: isKnowledeHubPage = $page.url.pathname.startsWith('/knowledge');
 </script>
 
 <ArchivedChatsModal
@@ -279,10 +285,13 @@
 			? ''
 			: 'invisible'}"
 	>
-		<div class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400" in:fade={{ duration: 200, delay: 200}}>
+		<div
+			class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400"
+			in:fade={{ duration: 200, delay: 200 }}
+		>
 			<a
 				id="sidebar-new-chat-button"
-				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-gray-850 dark:hover:bg-gray-800  transition-all"
+				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-gray-850 dark:hover:bg-gray-800 transition-all"
 				href="/"
 				draggable="false"
 				on:click={async () => {
@@ -298,9 +307,9 @@
 				}}
 			>
 				<div class="self-center mx-1">
-					<Plus className="size-4 stroke-white" strokeWidth="2"/>
+					<Plus className="size-4 stroke-white" strokeWidth="2" />
 				</div>
-				<div class=" self-center font-medium text-base text-white ">
+				<div class=" self-center font-medium text-base text-white">
 					{$i18n.t('New Chat')}
 				</div>
 				<!-- <div class="self-center ml-auto">
@@ -384,40 +393,77 @@
 			</div>
 		{/if} -->
 
-		<div class="relative flex flex-col flex-1 overflow-y-auto 		px-2.5 py-2.5 md:mt-5" in:fade={{ duration: 200}}>
-
+		<div
+			class="relative flex flex-col flex-1 overflow-y-auto px-2.5 py-2.5 md:mt-5"
+			in:fade={{ duration: 200 }}
+		>
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				class:bg-[#F3F6FD]={isHomePage}
+				class:dark:bg-gray-850={isHomePage}
 				on:click={() => {
 					goto('/');
 				}}
 			>
 				<div class=" self-center mr-3">
-					<Home className="size-5 fill-black dark:fill-white"/>
+					<Home
+						className={`size-5 dark:fill-white ${isHomePage ? 'fill-black' : 'fill-[#676F82]'}`}
+					/>
 				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Home</div>
+				<div
+					class="self-center font-medium group-hover:translate-x-1 transition-all"
+					class:text-black={isHomePage}
+					class:dark:text-white={isHomePage}
+					class:font-semibold={isHomePage}
+				>
+					Home
+				</div>
 			</button>
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				class:bg-[#F3F6FD]={isTeamsPage}
+				class:dark:bg-gray-850={isTeamsPage}
 				on:click={() => {
 					goto('/teams');
 				}}
 			>
 				<div class=" self-center mr-3">
-					<Teams className="size-5 fill-black dark:fill-white"/>
+					<Teams
+						className={`size-5 dark:fill-white ${isTeamsPage ? 'fill-black' : 'fill-[#676F82]'}`}
+					/>
 				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Teams</div>
+				<div
+					class="self-center font-medium group-hover:translate-x-1 transition-all"
+					class:text-black={isTeamsPage}
+					class:dark:text-white={isTeamsPage}
+					class:font-semibold={isTeamsPage}
+				>
+					Teams
+				</div>
 			</button>
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+				class:bg-[#F3F6FD]={isKnowledeHubPage}
+				class:dark:bg-gray-850={isKnowledeHubPage}
 				on:click={() => {
 					goto('/knowledge');
 				}}
 			>
 				<div class=" self-center mr-3">
-					<KnowledgeHub className="size-5 fill-black dark:fill-white"/>
+					<KnowledgeHub
+						className={`size-5 dark:fill-white ${
+							isKnowledeHubPage ? 'fill-black' : 'fill-[#676F82]'
+						}`}
+					/>
 				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Knowledge Hub</div>
+				<div
+					class="self-center font-medium group-hover:translate-x-1 transition-all"
+					class:text-black={isKnowledeHubPage}
+					class:dark:text-white={isKnowledeHubPage}
+					class:font-semibold={isKnowledeHubPage}
+				>
+					Knowledge Hub
+				</div>
 			</button>
 
 			<!-- {#if !($settings.saveChatHistory ?? true)}
@@ -570,47 +616,54 @@
 					/>
 				{/each}
 			</div> -->
-		</div> 
+		</div>
 
-		<div class="px-2.5 py-2.5 border-t-[0.5px] dark:border-gray-850" in:fade={{ duration: 200, delay: 200}}>
+		<div
+			class="px-2.5 py-2.5 border-t-[0.5px] dark:border-gray-850"
+			in:fade={{ duration: 200, delay: 200 }}
+		>
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
-				on:click={() => {
-					
-				}}
+				on:click={() => {}}
 			>
 				<div class=" self-center mr-3">
-					<MyAccount className="size-5 fill-black dark:fill-white"/>
+					<MyAccount className="size-5 fill-black dark:fill-white" />
 				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">My Account</div>
+				<div class="self-center font-medium group-hover:translate-x-1 transition-all">
+					My Account
+				</div>
 			</button>
 
 			{#if $theme !== 'dark'}
-			<button
-				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
-				on:click={() => {
-					themeChangeHandler('dark')
-				}}
-			>
-				<div class=" self-center mr-3">
-					<DarkMode className="size-5 fill-black dark:fill-white"/>
-				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Dark Mode</div>
-			</button>
+				<button
+					class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+					on:click={() => {
+						themeChangeHandler('dark');
+					}}
+				>
+					<div class=" self-center mr-3">
+						<DarkMode className="size-5 fill-black dark:fill-white" />
+					</div>
+					<div class="self-center font-medium group-hover:translate-x-1 transition-all">
+						Dark Mode
+					</div>
+				</button>
 			{/if}
 
 			{#if $theme === 'dark'}
-			<button
-				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
-				on:click={() => {
-					themeChangeHandler('light')
-				}}
-			>
-				<div class=" self-center mr-3">
-					<LightMode className="size-5 fill-black dark:fill-white"/>
-				</div>
-				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Light Mode</div>
-			</button>
+				<button
+					class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
+					on:click={() => {
+						themeChangeHandler('light');
+					}}
+				>
+					<div class=" self-center mr-3">
+						<LightMode className="size-5 fill-black dark:fill-white" />
+					</div>
+					<div class="self-center font-medium group-hover:translate-x-1 transition-all">
+						Light Mode
+					</div>
+				</button>
 			{/if}
 
 			<button
@@ -621,7 +674,7 @@
 				}}
 			>
 				<div class=" self-center mr-3">
-					<Logout	className="size-5 fill-black dark:fill-white"/>
+					<Logout className="size-5 fill-black dark:fill-white" />
 				</div>
 				<div class="self-center font-medium group-hover:translate-x-1 transition-all">Log Out</div>
 			</button>

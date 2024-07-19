@@ -117,19 +117,6 @@
 	</div>
 
 	<div class=" bg-white dark:bg-gray-950 min-h-screen w-full flex justify-center font-mona">
-		<!-- <div class="hidden lg:flex lg:flex-1 px-10 md:px-16 w-full bg-yellow-50 justify-center">
-			<div class=" my-auto pb-16 text-left">
-				<div>
-					<div class=" font-bold text-yellow-600 text-4xl">
-						Get up and running with <br />large language models, locally.
-					</div>
-
-					<div class="mt-2 text-yellow-600 text-xl">
-						Run Llama 2, Code Llama, and other models. Customize and create your own.
-					</div>
-				</div>
-			</div>
-		</div> -->
 
 		<div class="w-full sm:max-w-md px-10 min-h-screen flex flex-col text-center">
 			{#if ($config?.features.auth_trusted_header ?? false) || $config?.features.auth === false}
