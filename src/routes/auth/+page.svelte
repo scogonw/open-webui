@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { generateInitialsImage, canvasPixelTest } from '$lib/utils';
 	import { page } from '$app/stores';
+	import crypto from 'crypto';
 
 	const i18n = getContext('i18n');
 
@@ -93,7 +94,20 @@
 		if (($config?.features.auth_trusted_header ?? false) || $config?.features.auth === false) {
 			await signInHandler();
 		}
+		const params = new URLSearchParams($page.url.search);
+		let authRequestId = params.get('authRequestId');
+		if (!authRequestId) {
+			const res = await fetch('/api/authRequestId',{method:'GET'});
+			const resJson = await res.json();
+			if(resJson?.authRequestId){
+				authRequestId=resJson?.authRequestId;
+				params.set("authRequestId",authRequestId);
+				const newUrl = `${$page.url.pathname}?${params.toString()}`;
+				goto(newUrl);
+			}
+		}
 	});
+	console.log($page);
 </script>
 
 <svelte:head>
@@ -117,7 +131,6 @@
 	</div>
 
 	<div class=" bg-white dark:bg-gray-950 min-h-screen w-full flex justify-center font-mona">
-
 		<div class="w-full sm:max-w-md px-10 min-h-screen flex flex-col text-center">
 			{#if ($config?.features.auth_trusted_header ?? false) || $config?.features.auth === false}
 				<div class=" my-auto pb-10 w-full">
