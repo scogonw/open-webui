@@ -73,24 +73,6 @@
 					email: 'sieraferguson@gmail.com',
 					role: '',
 					avatar: 'https://picsum.photos/200/300'
-				},
-				{
-					name: 'Siera Ferguson',
-					email: 'sieraferguson@gmail.com',
-					role: '',
-					avatar: 'https://picsum.photos/200/300'
-				},
-				{
-					name: 'Siera Ferguson',
-					email: 'sieraferguson@gmail.com',
-					role: '',
-					avatar: 'https://picsum.photos/200/300'
-				},
-				{
-					name: 'Siera Ferguson',
-					email: 'sieraferguson@gmail.com',
-					role: '',
-					avatar: 'https://picsum.photos/200/300'
 				}
 			],
 			documentCount: 10,
@@ -198,7 +180,7 @@
 	let showUploadDocumentsModal = false;
 </script>
 
-<div class="p-4 md:p-10 h-full w-full flex flex-col">
+<div class="p-4 md:p-10 md:pl-20 md:pt-2 h-full w-full flex flex-col">
 	<div class="w-full h-20 flex justify-between items-center">
 		<div
 			class="w-52 md:w-80 h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"
@@ -220,7 +202,7 @@
 			Teams
 		</button>
 	</div>
-	<div class="w-full flex flex-wrap justify-center md:justify-start gap-10 mt-5 overflow-y-auto no-scrollbar">
+	<div class="w-full flex flex-wrap justify-center md:justify-start gap-10 mt-5 pb-2 overflow-y-auto no-scrollbar">
 		<TeamCard team={teamPlaceholder[0]} bind:showEditTeamModal={showEditTeamModal} bind:showUploadDocumentsModal={showUploadDocumentsModal}/>
 		<TeamCard team={teamPlaceholder[1]} bind:showEditTeamModal={showEditTeamModal} bind:showUploadDocumentsModal={showUploadDocumentsModal}/>
 		<TeamCard team={teamPlaceholder[2]} bind:showEditTeamModal={showEditTeamModal} bind:showUploadDocumentsModal={showUploadDocumentsModal}/>

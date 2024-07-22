@@ -125,7 +125,7 @@
 							</Checkbox.Indicator>
 						</Checkbox.Root>
 						<div class="w-full flex items-center gap-5 cursor-pointer group/user">
-							<img src={user.avatar} alt="Profile" class="rounded-full w-9 md:w-12 h-9 md:h-12" />
+							<img src={user.avatar} alt="Profile" class="rounded-full w-9 h-9 md:w-11 md:h-11" />
 							<div>
 								<h2 class="text-base font-medium">{user.name}</h2>
 								<h2 class="text-xs font-medium text-[#90A0B7]">{user.email}</h2>

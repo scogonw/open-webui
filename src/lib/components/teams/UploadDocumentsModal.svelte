@@ -10,6 +10,21 @@
 	import Tooltip from '../common/Tooltip.svelte';
 
 	export let show = false;
+
+	let isDragging = false;
+
+	function handleDragOver(event) {
+		event.preventDefault(); // Prevent default behavior to allow drop
+		isDragging = true;
+	}
+
+	function handleDragLeave() {
+		isDragging = false;
+	}
+
+	function handleDrop() {
+		isDragging = false;
+	}
 </script>
 
 <Modal size="w-[32rem]" bind:show>
@@ -27,42 +42,48 @@
 		>
 			<h1 class="text-lg font-medium dark:text-white">File Upload</h1>
 			<p class="text-[#007AFF]">Uploaded documents (10)</p>
-			<div class="w-full h-52 p-4 dashed rounded flex flex-col justify-evenly items-center">
+			<div
+				class="w-full h-52 p-4 dashed rounded flex flex-col justify-evenly items-center"
+				class:blur={isDragging}
+				on:dragover={handleDragOver}
+				on:dragleave={handleDragLeave}
+				on:drop={handleDrop}
+			>
 				<FileUpload className="size-12" />
 				<h1>Drag your file(s) to start uploading</h1>
 				<h2><span class="bg-white dark:bg-gray-850 dark:text-white">OR</span></h2>
 				<button
 					class="border-2 border-[#1849D6] text-[#1849D6] font-semibold py-1 px-2 rounded-lg hover:bg-[#1849D6] hover:text-white transition"
-					on:click={()=>{
-                        const fileExplorer = document.getElementById("file-upload");
-                        fileExplorer.click();
-                    }}
-                    >Browse Files</button
+					on:click={() => {
+						const fileExplorer = document.getElementById('file-upload');
+						fileExplorer.click();
+					}}>Browse Files</button
 				>
-                <input type="file" name="file-upload" id="file-upload" hidden>
+				<input type="file" name="file-upload" id="file-upload" hidden />
 			</div>
 			<h1 class="text-[#6D6D6D]">Only supports .pdf .doc and .csv files</h1>
 			<div class="w-full h-36">
-				<div class="w-full h-16 border-2 border-[#E7E7E7] dark:border-gray-700 rounded-2xl p-3 flex gap-2">
+				<div
+					class="w-full h-16 border-2 border-[#E7E7E7] dark:border-gray-700 rounded-2xl p-3 flex gap-2"
+				>
 					<div><Pdf className="size-8" /></div>
 					<div class="flex-grow">
 						<p class="text-sm leading-4 font-semibold">assets.pdf</p>
 						<p class="text-sm text-[#6D6D6D]">5.3 MB</p>
 					</div>
 					<div class="m-auto cursor-pointer hover:scale-110 transition duration-300">
-                        <Tooltip content="Remove">
-                            <FileCross className="size-6"/>
-                        </Tooltip>
-                    </div>
+						<Tooltip content="Remove">
+							<FileCross className="size-6" />
+						</Tooltip>
+					</div>
 				</div>
 			</div>
 			<div class="flex gap-4 justify-end">
 				<button
 					class="border border-[#CECECE] px-3 py-2 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
-					on:click={()=>{
-                        show=false;
-                    }}
-                    >Cancel</button
+					on:click={() => {
+						show = false;
+					}}>Cancel</button
 				>
 				<button class="bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800">Upload</button>
 			</div>

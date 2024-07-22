@@ -24,7 +24,7 @@
 	in:fade={{ duration: 200 }}
 >
 	<div
-		class="h-14 w-full flex justify-between items-center pl-3 pr-2 bg-[#F7F8FA] dark:bg-gray-850 border-b border-b-[#E5E5E5] dark:border-gray-800"
+		class="h-12 w-full flex justify-between items-center pl-3 pr-2 bg-[#F7F8FA] dark:bg-gray-850 border-b border-b-[#E5E5E5] dark:border-gray-800"
 	>
 		<h1 class="font-semibold text-lg">{team.teamName}</h1>
 		<div class="flex gap-2">
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 	<div
-		class="flex-grow w-full p-3 flex flex-col gap-4 overflow-y-auto no-scrollbar"
+		class="flex-grow h-full w-full p-3 flex flex-col gap-4 overflow-y-auto no-scrollbar"
 		bind:this={container}
 		on:scroll={handleScroll}
 	>
