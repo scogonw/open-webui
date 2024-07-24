@@ -20,6 +20,7 @@
 	let email = '';
 	let mobile = null;
 	let password = '';
+	let loading = false;
 
 	const ZITADEL_BASE_URL = import.meta.env.VITE_ZITADEL_DOMAIN;
 	const ZITADEL_SERVICE_ACCESS_TOKEN = import.meta.env.VITE_ZITADEL_SERVICE_ACCESS_TOKEN;
@@ -76,6 +77,7 @@
 
 		// await setSessionUser(sessionUser);
 
+		loading = true;
 		try {
 			const signInresponse = await fetch('/api/createSession', {
 				method: 'POST',
@@ -109,10 +111,13 @@
 				callback.searchParams.append('redirect_uri', REDIRECT_URI);
 				console.log(callback);
 				goto(callback.href);
+			} else {
+				toast.error('Error : Unable to Login');
 			}
 		} catch (error) {
 			console.log(error);
 		}
+		loading = false;
 	};
 
 	const signUpHandler = async () => {
@@ -126,6 +131,8 @@
 		// 	return null;
 		// });
 
+		// await setSessionUser(sessionUser);
+		loading = true;
 		try {
 			const signUpResponse = await fetch('/api/signup', {
 				method: 'POST',
@@ -166,8 +173,7 @@
 		} catch (error) {
 			console.log(error);
 		}
-
-		// await setSessionUser(sessionUser);
+		loading = false;
 	};
 
 	const submitHandler = async () => {
@@ -352,16 +358,21 @@
 								/>
 							</div>
 							{#if mode === 'signin'}
-							<a href="/auth/forgot" class="text-left w-full mt-2">Forgot Password ?</a>
+								<a href="/auth/forgot" class="text-left w-full mt-2">Forgot Password ?</a>
 							{/if}
 						</div>
 
 						<div class="mt-3">
 							<button
-								class=" bg-gray-900 hover:bg-gray-800 w-full rounded-2xl text-white font-medium text-sm py-3 transition"
+								class=" bg-gray-900 hover:bg-gray-800 w-full rounded-2xl text-white font-medium text-sm py-3 transition disabled:bg-gray-700"
 								type="submit"
+								disabled={loading}
 							>
-								{mode === 'signin' ? $i18n.t('Sign in') : $i18n.t('Create Account')}
+								{#if loading}
+									<Spinner />
+								{:else}
+									{mode === 'signin' ? $i18n.t('Sign in') : $i18n.t('Create Account')}
+								{/if}
 							</button>
 
 							{#if $config?.features.enable_signup}

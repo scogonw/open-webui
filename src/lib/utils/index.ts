@@ -758,3 +758,35 @@ export const bestMatchingLanguage = (supportedLanguages, preferredLanguages, def
 	console.log(languages, preferredLanguages, match, defaultLocale);
 	return match || defaultLocale;
 };
+
+
+
+/**
+ * Gets the value of a cookie by name.
+ * @param {string} name - The name of the cookie.
+ * @returns {string|null} - The value of the cookie, or null if not found.
+ */
+export function getCookie(name) {
+    const nameEQ = `${encodeURIComponent(name)}=`;
+    const cookies = document.cookie.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.indexOf(nameEQ) === 0) {
+            return decodeURIComponent(cookie.substring(nameEQ.length, cookie.length));
+        }
+    }
+    return null;
+}
+
+
+/**
+ * Deletes a cookie by name.
+ * @param {string} name - The name of the cookie to delete.
+ */
+export function deleteCookie(name) {
+    // Set the cookie's expiration date to the past to delete it
+    document.cookie = `${encodeURIComponent(name)}=; Max-Age=0; path=/;`;
+}
+
+

@@ -31,7 +31,8 @@
 
 	import { WEBUI_BASE_URL, WEBUI_HOSTNAME } from '$lib/constants';
 	import i18n, { initI18n, getLanguages } from '$lib/i18n';
-	import { bestMatchingLanguage } from '$lib/utils';
+	import { bestMatchingLanguage, getCookie } from '$lib/utils';
+	import { getUserByToken } from '$lib/apis/triton';
 
 	setContext('i18n', i18n);
 
@@ -131,9 +132,17 @@
 					USAGE_POOL.set(data['models']);
 				});
 
-				if (localStorage.token) {
+				const access_token = getCookie('access_token');
+
+				if (access_token) {
+					// if(localstorage.token){
 					// Get Session User Info
-					const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
+					// const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
+					// 	toast.error(error);
+					// 	return null;
+					// });
+
+					const sessionUser = await getUserByToken(access_token).catch((error)=>{
 						toast.error(error);
 						return null;
 					});

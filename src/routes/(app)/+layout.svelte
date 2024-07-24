@@ -39,6 +39,7 @@
 	import AccountPending from '$lib/components/layout/Overlay/AccountPending.svelte';
 	import { getFunctions } from '$lib/apis/functions';
 	import { page } from '$app/stores';
+	import { getCookie } from '$lib/utils';
 
 	const i18n = getContext('i18n');
 
@@ -51,7 +52,9 @@
 	};
 
 	onMount(async () => {
-		if (!localStorage.token && !$page.url.pathname.startsWith('/home')) {
+		const access_token = getCookie('access_token');
+
+		if (!access_token && !$page.url.pathname.startsWith('/home')) {
 			await goto('/home');
 		} else if ($user === undefined) {
 			await goto('/home');
@@ -193,9 +196,9 @@
 		class=" text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 h-screen max-h-[100dvh] overflow-auto flex flex-row"
 	>
 		{#if loaded}
-			{#if !['user', 'admin'].includes($user.role)}
-				<AccountPending />
-			{:else if localDBChats.length > 0}
+			<!-- {#if !['user', 'admin'].includes($user.role)}
+				<AccountPending /> -->
+			{#if localDBChats.length > 0}
 				<div class="fixed w-full h-full flex z-50">
 					<div
 						class="absolute w-full h-full backdrop-blur-md bg-white/20 dark:bg-gray-900/50 flex justify-center"

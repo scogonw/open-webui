@@ -44,6 +44,8 @@
 	import { fade } from 'svelte/transition';
 	import LightMode from '../icons/LightMode.svelte';
 	import { page } from '$app/stores';
+	import { deleteCookie, getCookie } from '$lib/utils';
+	import { logOutUser } from '$lib/apis/triton';
 	console.log($page);
 
 	const BREAKPOINT = 768;
@@ -80,6 +82,20 @@
 			return title.includes(query) || contentMatches;
 		}
 	});
+
+	const handleLogout = async () => {
+		const session_id = getCookie('session_id');
+		const session_token = getCookie('session_token');
+		const token = getCookie('access_token');
+		await logOutUser(session_id,session_token,token);
+		localStorage.removeItem('token');
+		deleteCookie('access_token');
+		deleteCookie('refresh_token');
+		deleteCookie('id_token');
+		deleteCookie('session_id');
+		deleteCookie('session_token');
+		location.href = '/auth';
+	};
 
 	onMount(async () => {
 		mobile.subscribe((e) => {
@@ -668,9 +684,8 @@
 
 			<button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
-				on:click={() => {
-					localStorage.removeItem('token');
-					location.href = '/auth';
+				on:click={async () => {
+					await handleLogout();
 				}}
 			>
 				<div class=" self-center mr-3">

@@ -38,9 +38,89 @@
 			})
 		});
 		if (res.ok) {
-            goto("/");
+			toast.success('You are now Logged In');
+			window.location.href = $page.url.origin;
+		} else {
+			toast.error('Error : Unable to Login');
+			goto('/auth');
 		}
 	});
 </script>
 
-<div>callback</div>
+<div
+	id="splash-screen"
+	style="position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 100%"
+>
+	<style type="text/css" nonce="">
+		html {
+			overflow-y: scroll !important;
+		}
+	</style>
+
+	<img
+		id="logo"
+		style="
+					position: absolute;
+					width: 6rem;
+					height: 6rem;
+					top: 41%;
+					left: 50%;
+					margin-left: -3rem;
+				"
+		src="/logo.png"
+        alt="splash"
+	/>
+
+	<div
+		style="
+					position: absolute;
+					top: 33%;
+					left: 50%;
+
+					width: 24rem;
+					margin-left: -12rem;
+
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				"
+	>
+		<img
+			id="logo-her"
+			style="width: 13rem; height: 13rem"
+			src="/logo.png"
+			class="animate-pulse-fast"
+            alt="splash"
+		/>
+
+		<div style="position: relative; width: 24rem; margin-top: 0.5rem">
+			<div
+				id="progress-background"
+				style="
+							position: absolute;
+							width: 100%;
+							height: 0.75rem;
+
+							border-radius: 9999px;
+							background-color: #fafafa9a;
+						"
+			/>
+
+			<div
+				id="progress-bar"
+				style="
+							position: absolute;
+							width: 0%;
+							height: 0.75rem;
+							border-radius: 9999px;
+							background-color: #fff;
+						"
+				class="bg-white"
+			/>
+		</div>
+	</div>
+
+	<!-- <span style="position: absolute; bottom: 32px; left: 50%; margin: -36px 0 0 -36px">
+				Footer content
+			</span> -->
+</div>
