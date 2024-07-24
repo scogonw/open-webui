@@ -35,11 +35,11 @@
 					<AddDocument className="w-[1.1rem] h-[1.1rem] cursor-pointer"/>
 			</button>
 			</Tooltip>
-			<!-- <TeamDropDown bind:showEditTeamModal={showEditTeamModal}>
+			<TeamDropDown bind:showEditTeamModal={showEditTeamModal}>
 				<Tooltip content='More'>
 					<ThreeDots className="size-3 cursor-pointer" />
 				</Tooltip>
-			</TeamDropDown> -->
+			</TeamDropDown>
 			<Tooltip content='Edit'>
 				<button
 				on:click={()=>{

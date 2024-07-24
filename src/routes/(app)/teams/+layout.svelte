@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import MenuLines from '$lib/components/icons/MenuLines.svelte';
 	import { showSidebar } from '$lib/stores';
 </script>

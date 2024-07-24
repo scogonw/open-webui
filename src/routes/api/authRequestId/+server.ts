@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import crypto from 'crypto';
 
 const ZITADEL_BASE_URL = import.meta.env.VITE_ZITADEL_DOMAIN;
@@ -45,7 +44,7 @@ export async function GET() {
 		const { searchParams: query } = new URL(res.url);
 		const authRequestId = query.get('authRequest');
 		if (authRequestId) {
-			return new Response(JSON.stringify({ authRequestId }), {
+			return new Response(JSON.stringify({ authRequestId, verifier }), {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' }
 			});

@@ -192,7 +192,6 @@
 			document.getElementById('splash-screen')?.remove();
 			loaded = true;
 		}
-
 		return () => {
 			window.removeEventListener('resize', onResize);
 		};

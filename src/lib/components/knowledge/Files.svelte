@@ -18,8 +18,8 @@
 		<Select.Root class="w-full">
 			<Select.Trigger class="hover:bg-[#F3F6FD] p-2 rounded-lg dark:hover:bg-gray-850">
 				<Select.Value placeholder="Access" class="dark:text-white" />
-				<DownCarret className="size-3 inline ml-4" />
-			</Select.Trigger>
+				<DownCarret className="size-3 inline ml-4 fill-black dark:fill-white" />
+			</Select.Trigger>	
 			<Select.Content class="border rounded-lg dark:border-gray-850">
 				<Select.Item
 					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-2 pr-1.5 text-sm cursor-pointer rounded-lg bg-white dark:bg-gray-900 dark:hover:bg-gray-850 dark:text-white  hover:bg-[#F3F6FD] outline-none transition-all duration-75 data-[highlighted]:bg-muted"

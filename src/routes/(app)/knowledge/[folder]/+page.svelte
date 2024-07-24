@@ -31,6 +31,7 @@
 	<div class="">
 		<BreadCrumbs />
 	</div>
+	<div class="text-[#6B6C7E] font-semibold">Files</div>
 	<div class="w-full h-svh">
 		<div class="w-full flex p-2 text-[#6B6C7E] font-semibold">
 			<div class="w-12" />
@@ -40,9 +41,27 @@
 			<div class="w-72">Uploaded By</div>
 			<div class="w-36">Date</div>
 		</div>
-		<Files name="Documentation" hit=12 access="admin" user={{avatar:"https://picsum.photos/200",name:"Lionel Ronaldo"}} uploadDate="12/03/2024"/>
-		<Files name="Documentation" hit=12 access="admin" user={{avatar:"https://picsum.photos/200",name:"Lionel Ronaldo"}} uploadDate="12/03/2024"/>
-		<Files name="Documentation" hit=12 access="admin" user={{avatar:"https://picsum.photos/200",name:"Lionel Ronaldo"}} uploadDate="12/03/2024"/>
-		<Files/>
+		<Files
+			name="Documentation"
+			hit="12"
+			access="admin"
+			user={{ avatar: 'https://picsum.photos/200', name: 'Lionel Ronaldo' }}
+			uploadDate="12/03/2024"
+		/>
+		<Files
+			name="Documentation"
+			hit="12"
+			access="admin"
+			user={{ avatar: 'https://picsum.photos/200', name: 'Lionel Ronaldo' }}
+			uploadDate="12/03/2024"
+		/>
+		<Files
+			name="Documentation"
+			hit="12"
+			access="admin"
+			user={{ avatar: 'https://picsum.photos/200', name: 'Lionel Ronaldo' }}
+			uploadDate="12/03/2024"
+		/>
+		<Files />
 	</div>
 </div>

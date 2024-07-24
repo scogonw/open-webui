@@ -15,9 +15,15 @@
 	let loaded = false;
 	let mode = 'signin';
 
-	let name = '';
+	let firstName = '';
+	let lastName = '';
 	let email = '';
+	let mobile = null;
 	let password = '';
+
+	const ZITADEL_BASE_URL = import.meta.env.VITE_ZITADEL_DOMAIN;
+	const ZITADEL_SERVICE_ACCESS_TOKEN = import.meta.env.VITE_ZITADEL_SERVICE_ACCESS_TOKEN;
+	const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
 	const setSessionUser = async (sessionUser) => {
 		if (sessionUser) {
@@ -33,24 +39,135 @@
 		}
 	};
 
-	const signInHandler = async () => {
-		const sessionUser = await userSignIn(email, password).catch((error) => {
-			toast.error(error);
-			return null;
-		});
+	const createCallback = async ({ authRequestId, session }) => {
+		try {
+			let body = {
+				session: {
+					sessionId: session.sessionId,
+					sessionToken: session.sessionToken
+				}
+			};
+			body = JSON.parse(JSON.stringify(body));
+			const url = new URL(`${ZITADEL_BASE_URL}/v2beta/oidc/auth_requests/${authRequestId}`);
+			console.log(url);
+			const headers = new Headers();
+			headers.append('Content-Type', 'application/json');
+			headers.append('Authorization', `Bearer ${ZITADEL_SERVICE_ACCESS_TOKEN}`);
+			const response = await fetch(url, {
+				method: 'POST',
+				body: JSON.stringify(body),
+				headers: headers
+			});
+			console.log(response);
+			return {
+				status: response.status,
+				data: await response.json()
+			};
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-		await setSessionUser(sessionUser);
+	const signInHandler = async () => {
+		// const sessionUser = await userSignIn(email, password).catch((error) => {
+		// 	toast.error(error);
+		// 	return null;
+		// });
+
+		// await setSessionUser(sessionUser);
+
+		try {
+			const signInresponse = await fetch('/api/createSession', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					email,
+					password
+				})
+			});
+
+			if (signInresponse.ok) {
+				const signInJSON = await signInresponse.json();
+				console.log(signInJSON);
+				const { session_id, session_token } = signInJSON;
+				const params = new URLSearchParams($page.url.search);
+				const authRequestId = params.get('authRequestId');
+				const callbackresponse = await createCallback({
+					authRequestId: authRequestId,
+					session: { sessionId: session_id, sessionToken: session_token }
+				});
+				console.log(callbackresponse);
+				if (
+					callbackresponse?.status === 200 &&
+					callbackresponse?.data &&
+					callbackresponse?.data?.callbackUrl
+				) {
+					const { searchParams } = new URL(callbackresponse?.data?.callbackUrl);
+					const code = searchParams.get('code');
+				}
+				const callback = new URL(callbackresponse?.data?.callbackUrl);
+				callback.searchParams.append('redirect_uri', REDIRECT_URI);
+				console.log(callback);
+				goto(callback.href);
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const signUpHandler = async () => {
-		const sessionUser = await userSignUp(name, email, password, generateInitialsImage(name)).catch(
-			(error) => {
-				toast.error(error);
-				return null;
-			}
-		);
+		// const sessionUser = await userSignUp(
+		// 	firstName,
+		// 	email,
+		// 	password,
+		// 	generateInitialsImage(firstName)
+		// ).catch((error) => {
+		// 	toast.error(error);
+		// 	return null;
+		// });
 
-		await setSessionUser(sessionUser);
+		try {
+			const signUpResponse = await fetch('/api/signup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					firstName,
+					lastName,
+					mobile,
+					email,
+					password
+				})
+			});
+
+			console.log(signUpResponse);
+			if (signUpResponse.ok) {
+				const sessionData = await signUpResponse.json();
+				console.log(sessionData);
+				const params = new URLSearchParams($page.url.search);
+				const authRequestId = params.get('authRequestId');
+				const callbackresponse = await createCallback({
+					authRequestId: authRequestId,
+					session: { sessionId: sessionData.session_id, sessionToken: sessionData.session_token }
+				});
+				console.log(callbackresponse);
+				if (
+					callbackresponse?.status === 200 &&
+					callbackresponse?.data &&
+					callbackresponse?.data?.callbackUrl
+				) {
+					const { searchParams } = new URL(callbackresponse?.data?.callbackUrl);
+					const code = searchParams.get('code');
+				}
+				const callback = new URL(callbackresponse?.data?.callbackUrl);
+				callback.searchParams.append('redirect_uri', REDIRECT_URI);
+				console.log(callback);
+				goto(callback.href);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+
+		// await setSessionUser(sessionUser);
 	};
 
 	const submitHandler = async () => {
@@ -97,17 +214,20 @@
 		const params = new URLSearchParams($page.url.search);
 		let authRequestId = params.get('authRequestId');
 		if (!authRequestId) {
-			const res = await fetch('/api/authRequestId',{method:'GET'});
+			const res = await fetch('/api/authRequestId', { method: 'GET' });
 			const resJson = await res.json();
-			if(resJson?.authRequestId){
-				authRequestId=resJson?.authRequestId;
-				params.set("authRequestId",authRequestId);
+			console.log(resJson);
+			if (resJson?.verifier) {
+				localStorage.setItem('verifier', resJson?.verifier);
+			}
+			if (resJson?.authRequestId) {
+				authRequestId = resJson?.authRequestId;
+				params.set('authRequestId', authRequestId);
 				const newUrl = `${$page.url.pathname}?${params.toString()}`;
 				goto(newUrl);
 			}
 		}
 	});
-	console.log($page);
 </script>
 
 <svelte:head>
@@ -130,7 +250,7 @@
 		</div>
 	</div>
 
-	<div class=" bg-white dark:bg-gray-950 min-h-screen w-full flex justify-center font-mona">
+	<div class=" bg-white dark:bg-gray-950 min-h-screen w-full flex justify-center">
 		<div class="w-full sm:max-w-md px-10 min-h-screen flex flex-col text-center">
 			{#if ($config?.features.auth_trusted_header ?? false) || $config?.features.auth === false}
 				<div class=" my-auto pb-10 w-full">
@@ -176,14 +296,31 @@
 						<div class="flex flex-col mt-4">
 							{#if mode === 'signup'}
 								<div>
-									<div class=" text-sm font-medium text-left mb-1">{$i18n.t('Name')}</div>
+									<div class=" text-sm font-medium text-left mb-1">{$i18n.t('First Name')}</div>
 									<input
-										bind:value={name}
+										bind:value={firstName}
 										type="text"
 										class=" px-5 py-3 rounded-2xl w-full text-sm outline-none border dark:border-none dark:bg-gray-900"
 										autocomplete="name"
-										placeholder={$i18n.t('Enter Your Full Name')}
+										placeholder={$i18n.t('Enter Your First Name')}
 										required
+									/>
+									<div class=" text-sm font-medium text-left mb-1 mt-2">{$i18n.t('Last Name')}</div>
+									<input
+										bind:value={lastName}
+										type="text"
+										class=" px-5 py-3 rounded-2xl w-full text-sm outline-none border dark:border-none dark:bg-gray-900"
+										autocomplete="name"
+										placeholder={$i18n.t('Enter Your First Name')}
+										required
+									/>
+									<div class=" text-sm font-medium text-left mt-2">{$i18n.t('Phone Number')}</div>
+									<input
+										bind:value={mobile}
+										type="number"
+										class=" px-5 py-3 rounded-2xl w-full text-sm outline-none border dark:border-none dark:bg-gray-900"
+										autocomplete="tel"
+										placeholder={$i18n.t('Enter Your Phone Number')}
 									/>
 								</div>
 
@@ -214,9 +351,12 @@
 									required
 								/>
 							</div>
+							{#if mode === 'signin'}
+							<a href="/auth/forgot" class="text-left w-full mt-2">Forgot Password ?</a>
+							{/if}
 						</div>
 
-						<div class="mt-5">
+						<div class="mt-3">
 							<button
 								class=" bg-gray-900 hover:bg-gray-800 w-full rounded-2xl text-white font-medium text-sm py-3 transition"
 								type="submit"
