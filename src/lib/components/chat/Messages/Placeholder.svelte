@@ -77,13 +77,13 @@
 			</div>
 			<div class="w-full">
 				<div
-					class=" capitalize line-clamp-1 w-fit bg-clip-text text-4xl md:text-6xl font-bold text-transparent bg-gradient-to-r from-[#0051AF] via-[#EB00FF] to-[#FF6565]"
+					class=" capitalize line-clamp-1 w-fit p-1 pl-0 bg-clip-text text-4xl md:text-6xl font-bold text-transparent bg-gradient-to-r from-[#0051AF] via-[#EB00FF] to-[#FF6565]"
 					in:fade={{ duration: 200 }}
 				>
 					{#if models[selectedModelIdx]?.info}
 						{models[selectedModelIdx]?.info?.name}
 					{:else}
-						{$i18n.t('Hello, {{name}}', { name: $user.name })}
+						{$i18n.t('Hello, {{name}}', { name: $user.first_name })}
 					{/if}
 				</div>
 
@@ -120,7 +120,9 @@
 						</div>
 					{/if}
 				</div>
-				<div class="flex flex-col md:flex-row gap-4 mt-2 md:mt-8 w-full">
+				<div class="flex flex-col md:flex-row gap-4 mt-2 md:mt-8 w-full"
+				in:fade={{duration:200,delay:200}}
+				>
 					<button
 						class=" flex justify-center rounded-xl py-3 px-3.5 w-64 bg-[#F3F6FD] dark:bg-gray-850 dark:hover:bg-gray-800 transition group"
 						on:click={() => {

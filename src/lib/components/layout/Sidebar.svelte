@@ -46,6 +46,21 @@
 	import { page } from '$app/stores';
 	import { deleteCookie, getCookie } from '$lib/utils';
 	import { logOutUser } from '$lib/apis/triton';
+	import { tweened } from 'svelte/motion';
+	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
+
+	// Initialize a tweened value for scale
+	const scale = tweened(1, {
+		duration: 50, // Fast transition duration
+		easing: cubicInOut // Easing for smooth transition
+	});
+
+	async function handleClick() {
+		// Scale down quickly
+		await scale.set(0.80, { duration: 100, easing: linear });
+		// Scale up even faster
+		await scale.set(1, { duration: 100, easing: linear });
+	}
 	console.log($page);
 
 	const BREAKPOINT = 768;
@@ -309,6 +324,8 @@
 				id="sidebar-new-chat-button"
 				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-gray-850 dark:hover:bg-gray-800 transition-all"
 				href="/"
+				style="transform: scale({$scale});"
+				on:click={handleClick}
 				draggable="false"
 				on:click={async () => {
 					selectedChatId = null;

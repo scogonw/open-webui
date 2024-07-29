@@ -8,7 +8,28 @@
 	import Pdf from '../icons/Pdf.svelte';
 	import FileCross from '../icons/FileCross.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 
+	// Initialize a tweened value for scale
+	const scale = tweened(1, {
+		duration: 50, // Fast transition duration
+		easing: cubicInOut // Easing for smooth transition
+	});
+
+	const scaleUpload = tweened(1, {
+		duration: 50, // Fast transition duration
+		easing: cubicInOut // Easing for smooth transition
+	});
+
+	async function handleClick() {
+		// Scale down quickly
+		await scale.set(0.8, { duration: 200, easing: linear });
+		// Scale up even faster
+		await scale.set(1, { duration: 100, easing: linear });
+	}
+
+	export let team;
 	export let show = false;
 
 	let isDragging = false;
@@ -42,6 +63,7 @@
 		>
 			<h1 class="text-lg font-medium dark:text-white">File Upload</h1>
 			<p class="text-[#007AFF]">Uploaded documents (10)</p>
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div
 				class="w-full h-52 p-4 dashed rounded flex flex-col justify-evenly items-center"
 				class:blur={isDragging}
@@ -54,6 +76,8 @@
 				<h2><span class="bg-white dark:bg-gray-850 dark:text-white">OR</span></h2>
 				<button
 					class="border-2 border-[#1849D6] text-[#1849D6] font-semibold py-1 px-2 rounded-lg hover:bg-[#1849D6] hover:text-white transition"
+					style="transform: scale({$scale});"
+					on:click={handleClick}
 					on:click={() => {
 						const fileExplorer = document.getElementById('file-upload');
 						fileExplorer.click();
@@ -85,7 +109,16 @@
 						show = false;
 					}}>Cancel</button
 				>
-				<button class="bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800">Upload</button>
+				<button
+					class="bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800"
+					style="transform: scale({$scaleUpload});"
+					on:click={async () => {
+						// Scale down quickly
+						await scaleUpload.set(0.9, { duration: 100, easing: linear });
+						// Scale up even faster
+						await scaleUpload.set(1, { duration: 100, easing: linear });
+					}}>Upload</button
+				>
 			</div>
 		</div>
 	</div>

@@ -5,9 +5,25 @@
 	import GarbageBin from '../icons/GarbageBin.svelte';
 	import Edit from '../icons/Edit.svelte';
 	import User from '../icons/User.svelte';
+	import { deleteTeam, getTeams } from '$lib/apis/triton';
+	import { toast } from 'svelte-sonner';
+	import { teams } from '$lib/stores';
 
 	export let showEditTeamModal;
+	export let team;
 	let show = false;
+
+	const handleDelete = async () => {
+		const res = await deleteTeam(team?.uid);
+		if (res) {
+			toast.success('Team Deleted');
+			const teamsdata = await getTeams();
+			if (teamsdata) {
+				const { data, metadata } = teamsdata;
+				teams.set(data);
+			}
+		}
+	};
 </script>
 
 <Dropdown bind:show>
@@ -25,22 +41,23 @@
 			<DropdownMenu.Item
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 			>
-				<User className='w-4 h-4 fill-[#666F8D]'/>
+				<User className="w-4 h-4 fill-[#666F8D]" />
 				<p class="ml-2">Add User</p>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				on:click={()=>{
-					showEditTeamModal=true;
+				on:click={() => {
+					showEditTeamModal = true;
 				}}
-				>
-				<Edit className='w-4 h-4 stroke-[#666F8D]'/>
+			>
+				<Edit className="w-4 h-4 stroke-[#666F8D]" />
 				<p class="ml-2">Edit</p>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+				on:click={handleDelete}
 			>
-				<GarbageBin className='w-4 h-4 stroke-[#666F8D]'/>
+				<GarbageBin className="w-4 h-4 stroke-[#666F8D]" />
 				<p class="ml-2">Delete</p>
 			</DropdownMenu.Item>
 		</DropdownMenu.Content>

@@ -22,7 +22,8 @@
 				content: content,
 				placement: placement,
 				allowHTML: true,
-				touch: touch
+				touch: touch,
+				delay:[500,0],
 			});
 		}
 	} else if (tooltipInstance && content === '') {
