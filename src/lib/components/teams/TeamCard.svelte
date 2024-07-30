@@ -37,7 +37,7 @@
 </script>
 
 <div
-	class="h-[22rem] w-80 rounded-xl flex flex-col border border-[#E5E5E580] dark:border-gray-800 shadow-md overflow-hidden text-black dark:text-white relative group"
+	class="h-[22rem] w-96 rounded-xl flex flex-col border border-[#E5E5E580] dark:border-gray-800 shadow-md overflow-hidden text-black dark:text-white relative group"
 	in:fade={{ duration: 200 }}
 >
 	<div

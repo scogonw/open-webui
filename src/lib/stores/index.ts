@@ -9,6 +9,7 @@ export const WEBUI_NAME = writable(APP_NAME);
 export const config: Writable<Config | undefined> = writable(undefined);
 export const user: Writable<SessionUser | undefined> = writable(undefined);
 export const teams = writable([]);
+export const files = writable([]);
 
 // Frontend
 export const MODEL_DOWNLOAD_POOL = writable({});

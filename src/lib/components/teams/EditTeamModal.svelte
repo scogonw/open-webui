@@ -7,8 +7,8 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import { getUsers } from '$lib/apis/triton';
-	import { user } from '$lib/stores';
+	import { editTeam, getUsers } from '$lib/apis/triton';
+	import { teams, user } from '$lib/stores';
 	import { writable } from 'svelte/store';
 
 	// Initialize a tweened value for scale
@@ -28,6 +28,7 @@
 
 	export let team;
 	export let show = false;
+	let name = team?.name;
 
 	let selectedUserIds = writable(new Set());
 
@@ -43,9 +44,23 @@
 		});
 	}
 
-	const handleclick = async () =>{
-		
-	}
+	const handleclick = async () => {
+		const editedTeam = await editTeam(team?.uid, {
+			name: name,
+			type: 'INTERNAL'
+		});
+		if (editedTeam) {
+			teams.update((prev) => {
+				return prev.map((e) => {
+					if (e?.uid === editedTeam?.uid) {
+						return editedTeam;
+					}
+					return e;
+				});
+			});
+			show=false;
+		}
+	};
 
 	onMount(async () => {
 		const data = await getUsers();
@@ -76,7 +91,7 @@
 				type="text"
 				id="team-name"
 				placeholder="Type group name"
-				value={team.name}
+				bind:value={name}
 				class="outline-none py-2 px-4 rounded-lg border dark:bg-gray-800 border-[#E2E4EA] dark:border-gray-800 dark:text-white dark:caret-white"
 			/>
 			<label for="team-members" class="text-sm font-normal text-[#334158] dark:text-white"

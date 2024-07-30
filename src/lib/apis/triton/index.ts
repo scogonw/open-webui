@@ -2,9 +2,10 @@ import { toast } from 'svelte-sonner';
 
 const SCOGO_ADMIN_API_K8S_HOST = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST;
 const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST_TEMP;
+const SCOGO_DRIVE_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST_TEMP;
 const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
 const tokendev4 =
-	'kyDOIITp3UB_fN65siY4u1FAcgTOx8J9yC6TZnaFWR5d3Ex2FvWCPQEkUYVY1BoilI_FbYQNjPO5aN8oHrDyxfawEhSSLhyljN3E5SZkGwXBPNkOQKBb_jf_-nQ';
+	'G9t0aUpfC7cEkYttjuo3AkgMMFOIHXfaeQsVF_LNmnvxiTzDU-IzR9r-q4Jq4-Sx5ScHw03TC4J5Eh9JlfHl1nrZz1pOh0-BrHmqgIKlPmRwbgdrk42bmdwgTGo';
 
 export const getUserByToken = async (token) => {
 	try {
@@ -77,10 +78,30 @@ export const createTeam = async (teamBody) => {
 			body: JSON.stringify(teamBody)
 		});
 		if (res.ok) {
-			const newTeam = res.json();
+			const newTeam = await res.json();
 			return newTeam;
 		}
 		toast.error('Error : Unable to create team');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const editTeam = async (id, teamBody) => {
+	try {
+		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${tokendev4}`
+			},
+			body: JSON.stringify(teamBody)
+		});
+		if (res.ok) {
+			const editedTeam = await res.json();
+			return editedTeam;
+		}
+		toast.error('Error : Unable to edit team');
 	} catch (error) {
 		console.log(error);
 	}
@@ -178,6 +199,68 @@ export const getUsers = async () => {
 			return data;
 		}
 		toast.error('Error : Unable to get users');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getDriveList = async (token) => {
+	try {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to get drive');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getFilesByParent = async (token, parent) => {
+	try {
+		const res = await fetch(
+			`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources?parent=${parent}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to get drive');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const createFolder = async (token, body) => {
+	try {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		console.log(res);
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to create folder');
 	} catch (error) {
 		console.log(error);
 	}

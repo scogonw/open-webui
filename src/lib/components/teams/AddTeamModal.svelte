@@ -7,7 +7,7 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { writable } from 'svelte/store';
-	import { createTeam, getUsers } from '$lib/apis/triton';
+	import { addMembersToTeam, createTeam, getUsers } from '$lib/apis/triton';
 	import { teams, user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -56,7 +56,8 @@
 				users:[]
 			});
 			if(newTeam){
-				teams.update(prev => [newTeam,...prev]);
+				// const addedMembers = await addMembersToTeam(newTeam?.uid,selectedIdsArray);
+				teams.update(prev => [newTeam,...prev]);// as team is being sent right now from api
 				toast.success(`Team ${teamName} created`)
 				show=false;
 			}
@@ -119,7 +120,7 @@
 							id={`terms-${user.id}`}
 							aria-labelledby="terms-label"
 							class="peer inline-flex size-[20px] items-center justify-center rounded-md border border-muted dark:border-gray-700 bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
-							on:click={() => toggleUserSelection(user.id)}
+							on:click={() => toggleUserSelection(user?.uid)}
 						>
 							<Checkbox.Indicator
 								let:isChecked

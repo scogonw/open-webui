@@ -270,6 +270,7 @@
 	$: isHomePage = $page.url.pathname === '/';
 	$: isTeamsPage = $page.url.pathname.startsWith('/teams');
 	$: isKnowledeHubPage = $page.url.pathname.startsWith('/knowledge');
+	console.log(isHomePage,isTeamsPage,isKnowledeHubPage);
 </script>
 
 <ArchivedChatsModal
@@ -655,7 +656,7 @@
 			class="px-2.5 py-2.5 border-t-[0.5px] dark:border-gray-850"
 			in:fade={{ duration: 200, delay: 200 }}
 		>
-			<button
+			<!-- <button
 				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group"
 				on:click={() => {}}
 			>
@@ -665,7 +666,7 @@
 				<div class="self-center font-medium group-hover:translate-x-1 transition-all">
 					My Account
 				</div>
-			</button>
+			</button> -->
 
 			{#if $theme !== 'dark'}
 				<button
