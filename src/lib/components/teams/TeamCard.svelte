@@ -82,7 +82,7 @@
 		{#if team.members.length > 0}
 			{#each team.members as user}
 				<div class="flex items-center gap-3 cursor-pointer group/user">
-					<img src={user?.avatar_link || '/user.png'} alt="Profile" class="rounded-full w-9 h-9" />
+					<img src={user?.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`} alt="Profile" class="rounded-full w-9 h-9" />
 					<div class="flex-grow">
 						<h2 class="text-xs font-medium">{user.name}</h2>
 						<h2 class="text-xs font-medium text-[#90A0B7]">{user.email}</h2>

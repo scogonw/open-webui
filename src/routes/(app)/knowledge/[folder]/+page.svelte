@@ -14,13 +14,15 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { files } from '$lib/stores';
+	import UploadDocumentsModal from '$lib/components/teams/UploadDocumentsModal.svelte';
+	import UploadLinkModal from '$lib/components/knowledge/UploadLinkModal.svelte';
 
 	const access_token = getCookie('access_token');
 
 	const fetchFiles = async (token, id) => {
 		const data = await getFilesByParent(token, id);
 		if (data) {
-			files.set(data)
+			files.set(data);
 		}
 	};
 
@@ -31,6 +33,8 @@
 	}
 
 	let showNewFolderModal = false;
+	let showUploadDocumentModal = false;
+	let showUploadLinkModal = false;
 
 	// onMount(async () => {
 	// 	fetchFiles(access_token, parentId);
@@ -50,7 +54,7 @@
 			/>
 		</div>
 		<div class="">
-			<UploadDropDown bind:showNewFolderModal>
+			<UploadDropDown bind:showNewFolderModal bind:showUploadDocumentModal bind:showUploadLinkModal>
 				<button
 					class="flex justify-center items-center bg-black px-5 py-2 rounded-lg gap-2 text-base font-semibold text-white"
 				>
@@ -64,25 +68,28 @@
 		<BreadCrumbs />
 	</div>
 	<div class="text-[#6B6C7E] font-semibold">Files</div>
-	<div class="w-full h-svh">
-		<div class="w-full flex p-2 text-[#6B6C7E] font-semibold">
-			<div class="w-12" />
-			<div class="w-72 flex-grow">Name</div>
-			<div class="w-20">Used</div>
-			<div class="w-36 pl-2">Access</div>
-			<div class="w-72">Uploaded By</div>
-			<div class="w-36">Date</div>
-		</div>
+	<div class="w-full flex p-2 text-[#6B6C7E] font-semibold">
+		<div class="w-12" />
+		<div class="w-72 flex-grow">Name</div>
+		<div class="w-20">Used</div>
+		<div class="w-36 pl-2">Access</div>
+		<div class="w-72">Uploaded By</div>
+		<div class="w-36">Date</div>
+		<div class="w-20 text-center" />
+	</div>
+	<div class="w-full h-svh overflow-y-auto">
 		{#each $files as file}
-			<Files
-				{file}
-				name="Documentation"
-				hit="12"
-				access="admin"
-				user={{ avatar: 'https://picsum.photos/200', name: 'Lionel Ronaldo' }}
-				uploadDate="12/03/2024"
-			/>
+			{#if file.mime_type === 'application/folder'}
+				<Files {file} />
+			{/if}
+		{/each}
+		{#each $files as file}
+			{#if file.mime_type !== 'application/folder'}
+				<Files {file} />
+			{/if}
 		{/each}
 	</div>
+	<UploadDocumentsModal bind:show={showUploadDocumentModal} />
 	<NewFolderModal bind:show={showNewFolderModal} />
+	<UploadLinkModal bind:show={showUploadLinkModal} />
 </div>

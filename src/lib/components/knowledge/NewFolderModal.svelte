@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { createFolder } from '$lib/apis/triton';
+	import { createAssetOnDrive } from '$lib/apis/triton';
 	import { getCookie } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
 	import Modal from '../common/Modal.svelte';
@@ -22,7 +22,7 @@
 				size: 0,
 				is_org_drive: true
 			};
-			const data = await createFolder(access_token, body);
+			const data = await createAssetOnDrive(access_token, body);
 			if (data) {
                 files.update(prev=>[data,...prev]);
 				toast.success(`New folder ${foldername} created`);

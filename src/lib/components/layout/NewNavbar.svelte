@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { user } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import FlipText from './FlipText.svelte';
 	function formatDate(timestamp) {
 		const date = new Date(timestamp);
 		const options = {
@@ -42,12 +43,13 @@
 	});
 </script>
 
-<div class="w-full h-16 shadow flex items-center justify-between px-5">
-	<div>
-		<p class="text-base font-bold">Hello, {$user.first_name}</p>
-		<p class="text-sm text-[#707EAE]">{timestamp}</p>
+<div class="w-full h-16 shadow flex items-center justify-between px-5 pr-6">
+	<div class="my-auto">
+		<!-- <p class="text-base font-bold">Hello, {$user.first_name}</p>
+		<p class="text-sm text-[#707EAE]">{timestamp}</p> -->
+		<FlipText/>
 	</div>
 	<div>
-		<img src={$user?.avatar_link || '/user.png'} alt="" class="w-9 h-9 rounded-full" />
+		<img src={$user?.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${$user?.first_name}+${$user?.last_name}`} alt="" class="w-9 h-9 rounded-full" />
 	</div>
 </div>

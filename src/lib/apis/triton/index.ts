@@ -2,10 +2,10 @@ import { toast } from 'svelte-sonner';
 
 const SCOGO_ADMIN_API_K8S_HOST = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST;
 const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST_TEMP;
-const SCOGO_DRIVE_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST_TEMP;
+const SCOGO_DRIVE_API_K8S_HOST = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST;
 const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
 const tokendev4 =
-	'G9t0aUpfC7cEkYttjuo3AkgMMFOIHXfaeQsVF_LNmnvxiTzDU-IzR9r-q4Jq4-Sx5ScHw03TC4J5Eh9JlfHl1nrZz1pOh0-BrHmqgIKlPmRwbgdrk42bmdwgTGo';
+	'_6-yjLpZa-prONtU5imo2UZn9OiilJ-2Ww6SDTZh3R8dkvb_2ZcoqdSE4jmnrnI1PU_8P9PjsgVPGYN8JlD6Dv5jQMEJfs5Sasei_hCMJwWOxSHVfxlDpGY7NJ4';
 
 export const getUserByToken = async (token) => {
 	try {
@@ -206,7 +206,7 @@ export const getUsers = async () => {
 
 export const getDriveList = async (token) => {
 	try {
-		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources`, {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -223,10 +223,10 @@ export const getDriveList = async (token) => {
 	}
 };
 
-export const getFilesByParent = async (token, parent) => {
+export const getFilesByParent = async (token, parent, limit = 50) => {
 	try {
 		const res = await fetch(
-			`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources?parent=${parent}`,
+			`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources?limit=${limit}&parent=${parent}`,
 			{
 				method: 'GET',
 				headers: {
@@ -245,9 +245,9 @@ export const getFilesByParent = async (token, parent) => {
 	}
 };
 
-export const createFolder = async (token, body) => {
+export const createAssetOnDrive = async (token, body) => {
 	try {
-		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST_TEMP}/v1/my-drive/resources`, {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -255,12 +255,70 @@ export const createFolder = async (token, body) => {
 			},
 			body: JSON.stringify(body)
 		});
-		console.log(res);
 		if (res.ok) {
 			const { data } = await res.json();
 			return data;
 		}
-		toast.error('Error : Unable to create folder');
+		toast.error('Error : Unable to create asset');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteAssetOnDrive = async (token, id) => {
+	try {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+		if (res.ok) {
+			const data = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to delete asset');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const editAssetOnDrive = async (token, id, body) => {
+	try {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		if (res.ok) {
+			const data = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to edit asset');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getSignedUrl = async (token, body) => {
+	try {
+		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources/upload`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		if (res.ok) {
+			const data = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to Upload asset');
 	} catch (error) {
 		console.log(error);
 	}

@@ -10,6 +10,11 @@
 	import Tooltip from '../common/Tooltip.svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
+	import { getCookie } from '$lib/utils';
+	import { createAssetOnDrive, getSignedUrl } from '$lib/apis/triton';
+	import { page } from '$app/stores';
+	import { toast } from 'svelte-sonner';
+	import { files } from '$lib/stores';
 
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
@@ -32,7 +37,13 @@
 	export let team;
 	export let show = false;
 
+	const access_token = getCookie('access_token');
 	let isDragging = false;
+	let filesToBeUploaded = [];
+
+	function handleFileChange(event) {
+		filesToBeUploaded = filesToBeUploaded.concat(Array.from(event.target.files)); // Convert FileList to an array
+	}
 
 	function handleDragOver(event) {
 		event.preventDefault(); // Prevent default behavior to allow drop
@@ -43,9 +54,66 @@
 		isDragging = false;
 	}
 
-	function handleDrop() {
+	function handleDrop(event) {
+		event.preventDefault();
 		isDragging = false;
+		const droppedFiles = Array.from(event.dataTransfer.files);
+		filesToBeUploaded = filesToBeUploaded.concat(droppedFiles); // Add dropped files to the array
 	}
+
+	function removeFile(index: number) {
+		filesToBeUploaded = filesToBeUploaded.filter((e, i) => i !== index);
+	}
+
+	const handleUpload = async () => {
+		if (filesToBeUploaded?.length > 0) {
+			filesToBeUploaded.map(async (file) => {
+				const body = {
+					title: file.name,
+					mime_type: file.type,
+					size: file.size,
+					parent: $page.params.folder,
+					is_org_drive: true
+				};
+				const data = await getSignedUrl(access_token, body);
+				if (data) {
+					try {
+						const { upload_urls } = data;
+						const { signed_url, url, file_name } = upload_urls[0];
+						const res = await fetch(signed_url, {
+							method: 'PUT',
+							headers: {
+								'Content-Type': file.type
+							},
+							body: file
+						});
+						console.log(res);
+						if (res.ok) {
+							const postSuccessBody = {
+								title: file.name,
+								mime_type: file.type,
+								parent: $page.params.folder,
+								size: file.size,
+								url: url,
+								is_org_drive: true
+							};
+							const newFiledata = await createAssetOnDrive(access_token, postSuccessBody);
+							if (newFiledata) {
+								files.update((prev) => [newFiledata, ...prev]);
+								toast.success('File(s) Uploaded');
+								show = false;
+							}
+						}
+					} catch (error) {
+						console.log(error);
+						toast.error('Error: Unable to Upload File(s)');
+					}
+				}
+			});
+		} else {
+			toast.error('Select atleast 1 file');
+		}
+	};
 </script>
 
 <Modal size="w-[32rem]" bind:show>
@@ -83,24 +151,36 @@
 						fileExplorer.click();
 					}}>Browse Files</button
 				>
-				<input type="file" name="file-upload" id="file-upload" hidden />
+				<input
+					type="file"
+					name="file-upload"
+					id="file-upload"
+					multiple
+					hidden
+					on:change={handleFileChange}
+				/>
 			</div>
-			<h1 class="text-[#6D6D6D]">Only supports .pdf .doc and .csv files</h1>
-			<div class="w-full h-36">
-				<div
-					class="w-full h-16 border-2 border-[#E7E7E7] dark:border-gray-700 rounded-2xl p-3 flex gap-2"
-				>
-					<div><Pdf className="size-8" /></div>
-					<div class="flex-grow">
-						<p class="text-sm leading-4 font-semibold">assets.pdf</p>
-						<p class="text-sm text-[#6D6D6D]">5.3 MB</p>
+			<h1 class="text-[#6D6D6D]">Only supports .pdf .doc and .txt files</h1>
+			<div class="w-full max-h-40 overflow-y-auto no-scrollbar">
+				{#each filesToBeUploaded as file, index}
+					<div
+						class="w-full h-16 mb-2 border-2 border-[#E7E7E7] dark:border-gray-700 rounded-2xl p-3 flex gap-2"
+					>
+						<div><Pdf className="size-8" /></div>
+						<div class="flex-grow">
+							<p class="text-sm leading-4 font-semibold">{file.name}</p>
+							<p class="text-sm text-[#6D6D6D]">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+						</div>
+						<button
+							class="m-auto cursor-pointer hover:scale-110 transition duration-300"
+							on:click={() => removeFile(index)}
+						>
+							<Tooltip content="Remove">
+								<FileCross className="size-6" />
+							</Tooltip>
+						</button>
 					</div>
-					<div class="m-auto cursor-pointer hover:scale-110 transition duration-300">
-						<Tooltip content="Remove">
-							<FileCross className="size-6" />
-						</Tooltip>
-					</div>
-				</div>
+				{/each}
 			</div>
 			<div class="flex gap-4 justify-end">
 				<button
@@ -113,6 +193,7 @@
 					class="bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800"
 					style="transform: scale({$scaleUpload});"
 					on:click={async () => {
+						handleUpload();
 						// Scale down quickly
 						await scaleUpload.set(0.9, { duration: 100, easing: linear });
 						// Scale up even faster

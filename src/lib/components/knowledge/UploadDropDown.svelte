@@ -8,6 +8,8 @@
 
 	let show = false;
 	export let showNewFolderModal;
+	export let showUploadDocumentModal;
+	export let showUploadLinkModal;
 </script>
 
 <Dropdown bind:show>
@@ -33,13 +35,18 @@
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				on:click={() => {}}
+				on:click={() => {
+					showUploadDocumentModal=true;
+				}}
 			>
 				<FileUpload2 className="w-4 h-4 stroke-[#666F8D]" />
 				<p class="ml-2">File Upload</p>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+				on:click={()=>{
+					showUploadLinkModal=true;
+				}}
 			>
 				<LinkFIle className="w-4 h-4 stroke-[#666F8D]" />
 				<p class="ml-2">Add Links</p>
