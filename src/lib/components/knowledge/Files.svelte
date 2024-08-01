@@ -41,17 +41,27 @@
 		'application/pdf': 'size-5 fill-[#FF5F5F] stroke-none'
 	};
 
-	function formatDateToMMDDYYYY(isoDateString) {
-		const date = new Date(isoDateString);
+function formatDateToMMDDYYYYWithTime(isoDateString) {
+    const date = new Date(isoDateString);
 
-		// Format the date to MM/DD/YYYY
-		const formattedDate =
-			`${(date.getMonth() + 1).toString().padStart(2, '0')}/` +
-			`${date.getDate().toString().padStart(2, '0')}/` +
-			`${date.getFullYear()}`;
+    // Format the date to MM/DD/YYYY
+    const formattedDate =
+        `${(date.getMonth() + 1).toString().padStart(2, '0')}/` +
+        `${date.getDate().toString().padStart(2, '0')}/` +
+        `${date.getFullYear()}`;
 
-		return formattedDate;
-	}
+    // Format the time to hh:mm:ss AM/PM
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = (hours % 12 || 12).toString().padStart(2, '0');
+
+    const formattedTime = `${formattedHours}:${minutes} ${amPm}`;
+
+    return `${formattedDate} ${formattedTime}`;
+}
+
 
 	const handleClick = async () => {
 		if (file.mime_type === 'application/folder') {
@@ -108,10 +118,10 @@
 			}}
 		>
 			<Select.Trigger
-				class="w-full text-left hover:bg-[#F3F6FD] p-2 rounded-lg dark:hover:bg-gray-850"
+				class="w-full flex justify-between items-center text-left hover:bg-[#F3F6FD] p-2 pr-6 rounded-lg dark:hover:bg-gray-850"
 			>
 				<Select.Value placeholder={file?.access_levels} class="dark:text-white" />
-				<DownCarret className="size-3 inline ml-4 fill-black dark:fill-white" />
+				<DownCarret className="size-3 inline fill-black dark:fill-white" />
 			</Select.Trigger>
 			<Select.Content class="border rounded-lg dark:border-gray-850">
 				<Select.Item
@@ -151,7 +161,7 @@
 		<p class="text-[#6B6C7E] text-sm dark:text-white truncate">{file?.created_by?.name}</p>
 	</div>
 	<div class="w-36 text-[#6B6C7E] text-sm dark:text-white">
-		{formatDateToMMDDYYYY(file?.created_at)}
+		{formatDateToMMDDYYYYWithTime(file?.created_at)}
 	</div>
 	<div class="w-20 text-center">
 		<FileDropDown {file}>

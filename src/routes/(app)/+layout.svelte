@@ -36,7 +36,6 @@
 	import SettingsModal from '$lib/components/chat/SettingsModal.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import ChangelogModal from '$lib/components/ChangelogModal.svelte';
-	import AccountPending from '$lib/components/layout/Overlay/AccountPending.svelte';
 	import { getFunctions } from '$lib/apis/functions';
 	import { page } from '$app/stores';
 	import { getCookie } from '$lib/utils';
@@ -77,16 +76,16 @@
 				// IndexedDB Not Found
 			}
 
-			const userSettings = await getUserSettings(localStorage.token).catch((error) => {
-				console.error(error);
-				return null;
-			});
+			// const userSettings = await getUserSettings(localStorage.token).catch((error) => {
+			// 	console.error(error);
+			// 	return null;
+			// });
 
-			if (userSettings) {
-				await settings.set(userSettings.ui);
-			} else {
-				await settings.set(JSON.parse(localStorage.getItem('settings') ?? '{}'));
-			}
+			// if (userSettings) {
+			// 	await settings.set(userSettings.ui);
+			// } else {
+			// 	await settings.set(JSON.parse(localStorage.getItem('settings') ?? '{}'));
+			// }
 
 			await Promise.all([
 				(async () => {

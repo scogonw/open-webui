@@ -8,7 +8,7 @@
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { writable } from 'svelte/store';
 	import { addMembersToTeam, createTeam, getUsers } from '$lib/apis/triton';
-	import { teams, user } from '$lib/stores';
+	import { allUsers, teams, user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -24,8 +24,6 @@
 		// Scale up even faster
 		await scale.set(1, { duration: 100, easing: linear });
 	}
-
-	let users = [];
 
 	export let show = false;
 
@@ -45,31 +43,33 @@
 		});
 	}
 
-	const handleclick = async () =>{
-		if(teamName){
+	const handleclick = async () => {
+		if (teamName) {
 			const selectedIdsArray = Array.from($selectedUserIds);
 			const newTeam = await createTeam({
-				name:teamName,
-				type:'INTERNAL',
-				description:'EMPTY',
+				name: teamName,
+				type: 'INTERNAL',
+				description: 'EMPTY',
 				org: `${$user.org}`,
-				users:[]
+				users: []
 			});
-			if(newTeam){
+			if (newTeam) {
 				// const addedMembers = await addMembersToTeam(newTeam?.uid,selectedIdsArray);
-				teams.update(prev => [newTeam,...prev]);// as team is being sent right now from api
-				toast.success(`Team ${teamName} created`)
-				show=false;
+				teams.update((prev) => [newTeam, ...prev]); // as team is being sent right now from api
+				toast.success(`Team ${teamName} created`);
+				show = false;
 			}
 		}
-	}
+	};
 
-	onMount(async()=>{
-		const data = await getUsers();
-		if(data){
-			users = data;
+	onMount(async () => {
+		if ($allUsers.length === 0) {
+			const data = await getUsers();
+			if (data) {
+				allUsers.set(data);
+			}
 		}
-	})
+	});
 </script>
 
 <Modal size="w-[26rem]" bind:show>
@@ -114,7 +114,7 @@
 			</div>
 			<hr class="dark:border-gray-800" />
 			<div class="max-h-60 px-2 flex flex-col gap-2 overflow-y-auto">
-				{#each users as user}
+				{#each $allUsers as user}
 					<div class="flex items-center space-x-3">
 						<Checkbox.Root
 							id={`terms-${user.id}`}
@@ -133,7 +133,11 @@
 							</Checkbox.Indicator>
 						</Checkbox.Root>
 						<div class="w-full flex items-center gap-5 cursor-pointer group/user">
-							<img src={user.avatar_link} alt="Profile" class="rounded-full w-9 h-9 md:w-11 md:h-11" />
+							<img
+								src={user.avatar_link}
+								alt="Profile"
+								class="rounded-full w-9 h-9 md:w-11 md:h-11"
+							/>
 							<div>
 								<h2 class="text-base font-medium">{user.first_name}</h2>
 								<h2 class="text-xs font-medium text-[#90A0B7]">{user.email}</h2>

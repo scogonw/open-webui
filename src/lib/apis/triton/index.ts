@@ -5,7 +5,7 @@ const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_H
 const SCOGO_DRIVE_API_K8S_HOST = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST;
 const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
 const tokendev4 =
-	'_6-yjLpZa-prONtU5imo2UZn9OiilJ-2Ww6SDTZh3R8dkvb_2ZcoqdSE4jmnrnI1PU_8P9PjsgVPGYN8JlD6Dv5jQMEJfs5Sasei_hCMJwWOxSHVfxlDpGY7NJ4';
+	'ALdugbJI_1H4Neu5kBLiXhkbxHwIeC7L6RbVCFZajDSjM4bUeCzl35KYMvKw_4vz21UxuavlgUnFtmUZYsoit1YG27A9pEf7inLQh-GuFJpyD9lip7oKJshZKpg';
 
 export const getUserByToken = async (token) => {
 	try {
@@ -223,10 +223,16 @@ export const getDriveList = async (token) => {
 	}
 };
 
-export const getFilesByParent = async (token, parent, limit = 50) => {
+export const getFilesByParent = async (
+	token,
+	parent,
+	sortBy = 'created_at',
+	sortOrder = 'desc',
+	limit = 50
+) => {
 	try {
 		const res = await fetch(
-			`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources?limit=${limit}&parent=${parent}`,
+			`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources?limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}&parent=${parent}`,
 			{
 				method: 'GET',
 				headers: {

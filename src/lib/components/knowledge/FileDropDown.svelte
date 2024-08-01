@@ -7,6 +7,8 @@
 	import { getCookie } from '$lib/utils';
 	import { files } from '$lib/stores';
 	import { toast } from 'svelte-sonner';
+	import DownloadIcon from '../icons/DownloadIcon.svelte';
+	import PreviewIcon from '../icons/PreviewIcon.svelte';
 
 	export let file;
 	let show = false;
@@ -22,7 +24,27 @@
 
 	const handlePreview = async () => {};
 
-	const handleDownload = async () => {};
+	const handleDownload = async () => {
+		fetch(file.url)
+			.then((response) => response.blob())
+			.then((blob) => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = file.title; // Specify the filename
+
+				document.body.appendChild(a);
+				a.click();
+
+				// Clean up
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+			})
+			.catch((error) => {
+				toast.error('Error : Download failed')
+				console.error('Download failed:', error)});
+	};
 </script>
 
 <Dropdown bind:show>
@@ -50,14 +72,14 @@
 					class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					on:click={handlePreview}
 				>
-					<GarbageBin className="w-4 h-4 stroke-[#666F8D]" />
+					<PreviewIcon className="size-4 stroke-[#666F8D] dark:stroke-white dark:fill-white" />
 					<p class="ml-2">Preview</p>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
 					class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					on:click={handleDownload}
 				>
-					<GarbageBin className="w-4 h-4 stroke-[#666F8D]" />
+					<DownloadIcon className="size-4 stroke-[#666F8D] dark:stroke-white dark:fill-white" />
 					<p class="ml-2">Download</p>
 				</DropdownMenu.Item>
 			{/if}
@@ -65,7 +87,7 @@
 				class="flex h-10 select-none items-center rounded-md py-3 pl-3 pr-1.5 text-sm font-medium cursor-pointer hover:bg-[#F3F6FD] dark:hover:bg-gray-700 !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				on:click={handleDelete}
 			>
-				<GarbageBin className="w-4 h-4 stroke-[#666F8D]" />
+				<GarbageBin className="size-4 stroke-[#666F8D] dark:stroke-white " />
 				<p class="ml-2">Delete</p>
 			</DropdownMenu.Item>
 		</DropdownMenu.Content>

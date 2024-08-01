@@ -85,7 +85,74 @@
 
 		let backendConfig = null;
 		try {
-			backendConfig = await getBackendConfig();
+			backendConfig = {
+				status: true,
+				name: 'Sia : Tech Support AI Agent',
+				version: '0.3.7',
+				default_locale: 'en-US',
+				default_models: null,
+				default_prompt_suggestions: [
+					{
+						title: ['General', 'What all things can you help me with ?'],
+						content: 'What all things can you help me with ?'
+					},
+					{
+						title: ['Performance', 'My PC is running slow, can you help ?'],
+						content: 'My PC is running slow, can you help ?'
+					},
+					{
+						title: ['Setup', 'How to set up my work email on my iPhone ?'],
+						content: 'How to set up my work email on my iPhone ?'
+					},
+					{
+						title: [
+							'Troubleshooting',
+							'The webcam of my Lenovo Ideapad Slim3 is not working properly, need help ?'
+						],
+						content: 'The webcam of my Lenovo Ideapad Slim3 is not working properly, need help ?'
+					},
+					{
+						title: [
+							'Recommendation',
+							'My laptop battery drains quickly, how can I improve battery life ?'
+						],
+						content: 'My laptop battery drains quickly, how can I improve battery life ?'
+					},
+					{
+						title: ['Help', 'How can i recover deleted files from my windows 10 machine ?'],
+						content: 'How can i recover deleted files from my windows 10 machine ?'
+					},
+					{
+						title: [
+							'Comparison',
+							'I am looking for high speed internet plan, compare Airtel Xtreme Fibore and Jio Fibre plans for me ?'
+						],
+						content:
+							'I am looking for high speed internet plan, compare Airtel Xtreme Fibore and Jio Fibre plans for me ?'
+					}
+				],
+				features: {
+					auth: true,
+					auth_trusted_header: false,
+					enable_signup: true,
+					enable_web_search: false,
+					enable_image_generation: false,
+					enable_community_sharing: false,
+					enable_admin_export: true
+				},
+				audio: {
+					tts: {
+						engine: '',
+						voice: 'alloy'
+					},
+					stt: {
+						engine: ''
+					}
+				},
+				oauth: {
+					providers: {}
+				}
+			};
 			console.log('Backend config:', backendConfig);
 		} catch (error) {
 			console.error('Error loading backend config:', error);
@@ -111,26 +178,26 @@
 			await WEBUI_NAME.set(backendConfig.name);
 
 			if ($config) {
-				const _socket = io(`${WEBUI_BASE_URL}`, {
-					path: '/ws/socket.io',
-					auth: { token: localStorage.token }
-				});
+				// const _socket = io(`${WEBUI_BASE_URL}`, {
+				// 	path: '/ws/socket.io',
+				// 	auth: { token: localStorage.token }
+				// });
 
-				_socket.on('connect', () => {
-					console.log('connected');
-				});
+				// _socket.on('connect', () => {
+				// 	console.log('connected');
+				// });
 
-				await socket.set(_socket);
+				// await socket.set(_socket);
 
-				_socket.on('user-count', (data) => {
-					console.log('user-count', data);
-					activeUserCount.set(data.count);
-				});
+				// _socket.on('user-count', (data) => {
+				// 	console.log('user-count', data);
+				// 	activeUserCount.set(data.count);
+				// });
 
-				_socket.on('usage', (data) => {
-					console.log('usage', data);
-					USAGE_POOL.set(data['models']);
-				});
+				// _socket.on('usage', (data) => {
+				// 	console.log('usage', data);
+				// 	USAGE_POOL.set(data['models']);
+				// });
 
 				const access_token = getCookie('access_token');
 
@@ -142,7 +209,7 @@
 					// 	return null;
 					// });
 
-					const sessionUser = await getUserByToken(access_token).catch((error)=>{
+					const sessionUser = await getUserByToken(access_token).catch((error) => {
 						toast.error(error);
 						return null;
 					});

@@ -8,7 +8,7 @@
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { onMount } from 'svelte';
 	import { editTeam, getUsers } from '$lib/apis/triton';
-	import { teams, user } from '$lib/stores';
+	import { allUsers, teams, user } from '$lib/stores';
 	import { writable } from 'svelte/store';
 
 	// Initialize a tweened value for scale
@@ -23,8 +23,6 @@
 		// Scale up even faster
 		await scale.set(1, { duration: 100, easing: linear });
 	}
-
-	let users = [];
 
 	export let team;
 	export let show = false;
@@ -58,16 +56,18 @@
 					return e;
 				});
 			});
-			show=false;
+			show = false;
 		}
 	};
 
-	onMount(async () => {
-		const data = await getUsers();
-		if (data) {
-			users = data;
-		}
-	});
+	// onMount(async () => {
+	// 	if ($allUsers.length === 0) {
+	// 		const data = await getUsers();
+	// 		if (data) {
+	// 			allUsers.set(data);
+	// 		}
+	// 	}
+	// });
 </script>
 
 <Modal size="w-[26rem]" bind:show>
@@ -112,8 +112,8 @@
 			</div>
 			<hr class="dark:border-gray-800" />
 			<div class="max-h-60 px-2 flex flex-col gap-2 overflow-y-auto">
-				{#if users.length > 0}
-					{#each users as user}
+				{#if $allUsers.length > 0}
+					{#each $allUsers as user}
 						<div class="flex items-center space-x-3">
 							<Checkbox.Root
 								id={`terms-${user.id}`}
@@ -133,7 +133,7 @@
 							</Checkbox.Root>
 							<div class="w-full flex items-center gap-5 group/user">
 								<img
-									src={user.avatar_link}
+									src={user.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`}
 									alt="Profile"
 									class="rounded-full w-9 h-9 md:w-11 md:h-11"
 								/>
@@ -146,7 +146,8 @@
 					{/each}
 				{/if}
 			</div>
-			<button class="bg-black text-white px-5 py-2 rounded-lg w-fit m-auto" on:click={handleclick}
+			<hr>
+			<button class="bg-black text-white px-5 py-2 rounded-lg w-full m-auto" on:click={handleclick}
 				>Submit</button
 			>
 		</div>
