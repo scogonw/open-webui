@@ -112,7 +112,8 @@
 				console.log(callback);
 				goto(callback.href);
 			} else {
-				toast.error('Error : Unable to Login');
+				const {data} = await signInresponse.json();
+				toast.error(`Error : ${data?.message[0]}`);
 			}
 		} catch (error) {
 			console.log(error);
@@ -169,6 +170,10 @@
 				callback.searchParams.append('redirect_uri', REDIRECT_URI);
 				console.log(callback);
 				goto(callback.href);
+			}
+			else{
+				const {data} = await signUpResponse.json();
+				toast.error(`Error : ${data?.message[0]}`);
 			}
 		} catch (error) {
 			console.log(error);

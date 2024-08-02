@@ -11,6 +11,7 @@
 	import { allUsers, teams, user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { getCookie } from '$lib/utils';
 
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
@@ -62,9 +63,11 @@
 		}
 	};
 
+	const access_token = getCookie('access_token');
+
 	onMount(async () => {
 		if ($allUsers.length === 0) {
-			const data = await getUsers();
+			const data = await getUsers(access_token);
 			if (data) {
 				allUsers.set(data);
 			}

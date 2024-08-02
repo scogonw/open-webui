@@ -9,9 +9,32 @@
 
 	let prompts = [];
 
-	$: prompts = suggestionPrompts
-		.reduce((acc, current) => [...acc, ...[current]], [])
-		.sort(() => Math.random() - 0.5);
+	function shuffle(array) {
+		let m = array.length,
+			t,
+			i;
+
+		// While there remain elements to shuffle...
+		while (m) {
+			// Pick a remaining element...
+			i = Math.floor(Math.random() * m--);
+
+			// And swap it with the current element.
+			t = array[m];
+			array[m] = array[i];
+			array[i] = t;
+		}
+
+		return array;
+	}
+
+	$: prompts = shuffle([...suggestionPrompts]);
+
+	// $: prompts = suggestionPrompts
+	// 	.reduce((acc, current) => [...acc, ...[current]], [])
+	// 	.sort(() => Math.random() - 0.5);
+
+
 	// suggestionPrompts.length <= 4
 	// 	? suggestionPrompts
 	// 	: suggestionPrompts.sort(() => Math.random() - 0.5).slice(0, 4);
@@ -60,8 +83,10 @@
 							>
 								{prompt.title[0]}
 							</div> -->
-							<div class="text-sm text-[#404040] font-medium dark:text-white line-clamp-1">{prompt.content}</div>
-						<!-- {:else}
+							<div class="text-sm text-[#404040] font-medium dark:text-white line-clamp-1">
+								{prompt.content}
+							</div>
+							<!-- {:else}
 							<div
 								class="  text-sm font-medium dark:text-gray-300 dark:group-hover:text-gray-100 transition line-clamp-2"
 							>
@@ -71,13 +96,13 @@
 					</div>
 
 					<!-- <div class="w-full flex justify-end"> -->
-						<!-- <div
+					<!-- <div
 							class="text-xs text-gray-400 group-hover:text-gray-500 dark:text-gray-600 dark:group-hover:text-gray-500 transition self-center"
 						>
 							{$i18n.t('Prompt')}
 						</div> -->
 
-						<!-- <div
+					<!-- <div
 							class="self-end p-1 rounded-lg text-gray-300 group-hover:text-gray-800 dark:text-gray-700 dark:group-hover:text-gray-100 transition"
 						>
 							<svg

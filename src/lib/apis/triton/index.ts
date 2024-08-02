@@ -4,8 +4,9 @@ const SCOGO_ADMIN_API_K8S_HOST = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST;
 const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST_TEMP;
 const SCOGO_DRIVE_API_K8S_HOST = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST;
 const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
+const SCOGO_CHAT_API_K8S_HOST = import.meta.env.VITE_SCOGO_CHAT_API_K8S_HOST;
 const tokendev4 =
-	'ALdugbJI_1H4Neu5kBLiXhkbxHwIeC7L6RbVCFZajDSjM4bUeCzl35KYMvKw_4vz21UxuavlgUnFtmUZYsoit1YG27A9pEf7inLQh-GuFJpyD9lip7oKJshZKpg';
+	'lVs0sJolh2zxNPrASFQG7z5uMqyDNt9_wd2JbWsKPhyxmGYCfqvMPganU3NntrFtdEk0Jq-i7LCwCwyfhtsIvo5h5bieW_41QgGisudFYQNeFnV8Zoie8u__EkQ';
 
 export const getUserByToken = async (token) => {
 	try {
@@ -185,7 +186,7 @@ export const addMembersToTeam = async (id, users) => {
 	}
 };
 
-export const getUsers = async () => {
+export const getUsers = async (token) => {
 	try {
 		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/users`, {
 			method: 'GET',
@@ -325,6 +326,64 @@ export const getSignedUrl = async (token, body) => {
 			return data;
 		}
 		toast.error('Error : Unable to Upload asset');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getAllAiChats = async (token) => {
+	try {
+		const res = await fetch(`${SCOGO_CHAT_API_K8S_HOST}/v1/chat`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to get chats');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getMessageOfChatMapping = async (token, id) => {
+	try {
+		const res = await fetch(`${SCOGO_CHAT_API_K8S_HOST}/v1/chat/${id}/messages`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to get chat messages');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const sendMessageInChatMapping = async (token, id, body) => {
+	try {
+		const res = await fetch(`${SCOGO_CHAT_API_K8S_HOST}/v1/chat/${id}/messages`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		if (res.ok) {
+			const data = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to send message');
 	} catch (error) {
 		console.log(error);
 	}

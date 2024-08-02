@@ -230,7 +230,7 @@
 	let metadataOfTeams;
 
 	const handleScroll =async () => {
-		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight;
+		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 10;
 		if(isAtBottom && metadataOfTeams?.has_more){
 			const teamsdata = await getTeams(search ? search : '',metadataOfTeams?.limit*metadataOfTeams?.page);
 			if(teamsdata){
@@ -290,7 +290,7 @@
 		</button>
 	</div>
 	<div
-		class={`w-full flex flex-wrap justify-center md:justify-start mt-5 pb-2 overflow-y-auto no-scrollbar gap-10`}
+		class={`w-full h-auto flex flex-wrap justify-center md:justify-start mt-5 pb-2 overflow-y-auto no-scrollbar gap-10`}
 		in:fade={{ duration: 200 }}
 		bind:this={container}
 		on:scroll={handleScroll}

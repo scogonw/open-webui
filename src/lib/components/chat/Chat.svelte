@@ -31,6 +31,7 @@
 		convertMessagesToHistory,
 		copyToClipboard,
 		extractSentencesForAudio,
+		getCookie,
 		getUserPosition,
 		promptTemplate,
 		splitStream
@@ -60,6 +61,8 @@
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import CallOverlay from './MessageInput/CallOverlay.svelte';
 	import { error } from '@sveltejs/kit';
+	import NewNavbar from '../layout/NewNavbar.svelte';
+	import { getAllAiChats } from '$lib/apis/triton';
 
 	const i18n: Writable<i18nType> = getContext('i18n');
 
@@ -126,58 +129,65 @@
 		})();
 	}
 
-	onMount(async () => {
-		const onMessageHandler = async (event) => {
-			if (event.origin === window.origin) {
-				// Replace with your iframe's origin
-				if (event.data.type === 'input:prompt') {
-					console.log(event.data.text);
+	const access_token = getCookie('access_token');
 
-					const inputElement = document.getElementById('chat-textarea');
+	onMount(async ()=>{
+		const data = await getAllAiChats(access_token);
+		console.log(data);
+	})
 
-					if (inputElement) {
-						prompt = event.data.text;
-						inputElement.focus();
-					}
-				}
+	// onMount(async () => {
+	// 	const onMessageHandler = async (event) => {
+	// 		if (event.origin === window.origin) {
+	// 			// Replace with your iframe's origin
+	// 			if (event.data.type === 'input:prompt') {
+	// 				console.log(event.data.text);
 
-				if (event.data.type === 'action:submit') {
-					console.log(event.data.text);
+	// 				const inputElement = document.getElementById('chat-textarea');
 
-					if (prompt !== '') {
-						await tick();
-						submitPrompt(prompt);
-					}
-				}
+	// 				if (inputElement) {
+	// 					prompt = event.data.text;
+	// 					inputElement.focus();
+	// 				}
+	// 			}
 
-				if (event.data.type === 'input:prompt:submit') {
-					console.log(event.data.text);
+	// 			if (event.data.type === 'action:submit') {
+	// 				console.log(event.data.text);
 
-					if (prompt !== '') {
-						await tick();
-						submitPrompt(event.data.text);
-					}
-				}
-			}
-		};
-		window.addEventListener('message', onMessageHandler);
+	// 				if (prompt !== '') {
+	// 					await tick();
+	// 					submitPrompt(prompt);
+	// 				}
+	// 			}
 
-		if (!$chatId) {
-			chatId.subscribe(async (value) => {
-				if (!value) {
-					await initNewChat();
-				}
-			});
-		} else {
-			if (!($settings.saveChatHistory ?? true)) {
-				await goto('/');
-			}
-		}
+	// 			if (event.data.type === 'input:prompt:submit') {
+	// 				console.log(event.data.text);
 
-		return () => {
-			window.removeEventListener('message', onMessageHandler);
-		};
-	});
+	// 				if (prompt !== '') {
+	// 					await tick();
+	// 					submitPrompt(event.data.text);
+	// 				}
+	// 			}
+	// 		}
+	// 	};
+	// 	window.addEventListener('message', onMessageHandler);
+
+	// 	if (!$chatId) {
+	// 		chatId.subscribe(async (value) => {
+	// 			if (!value) {
+	// 				await initNewChat();
+	// 			}
+	// 		});
+	// 	} else {
+	// 		if (!($settings.saveChatHistory ?? true)) {
+	// 			await goto('/');
+	// 		}
+	// 	}
+
+	// 	return () => {
+	// 		window.removeEventListener('message', onMessageHandler);
+	// 	};
+	// });
 
 	//////////////////////////
 	// Web functions
@@ -1369,7 +1379,7 @@
 			? 'md:max-w-[calc(100%-260px)]'
 			: ''} w-full max-w-full flex flex-col"
 	>
-		{#if $settings?.backgroundImageUrl ?? null}
+		<!-- {#if $settings?.backgroundImageUrl ?? null}
 			<div
 				class="absolute {$showSidebar
 					? 'md:max-w-[calc(100%-260px)] md:translate-x-[260px]'
@@ -1380,16 +1390,17 @@
 			<div
 				class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-white to-white/85 dark:from-gray-900 dark:to-[#171717]/90 z-0"
 			/>
-		{/if}
+		{/if} -->
 
-		<Navbar
+		<!-- <Navbar
 			{title}
 			bind:selectedModels
 			bind:showModelSelector
 			shareEnabled={messages.length > 0}
 			{chat}
 			{initNewChat}
-		/>
+		/> -->
+		<NewNavbar />
 
 		{#if $banners.length > 0 && messages.length === 0 && !$chatId && selectedModels.length <= 1}
 			<div

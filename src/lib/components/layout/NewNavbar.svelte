@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { user } from '$lib/stores';
+	import { showSidebar, user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import FlipText from './FlipText.svelte';
+	import MenuLines from '../icons/MenuLines.svelte';
 	function formatDate(timestamp) {
 		const date = new Date(timestamp);
 		const options = {
@@ -37,19 +38,41 @@
 		const interval = setInterval(() => {
 			timestamp = formatDate(Date.now());
 		}, 1000);
-        return () => {
+		return () => {
 			clearInterval(interval);
 		};
 	});
 </script>
 
 <div class="w-full h-16 shadow flex items-center justify-between px-5 pr-6">
-	<div class="my-auto">
-		<!-- <p class="text-base font-bold">Hello, {$user.first_name}</p>
-		<p class="text-sm text-[#707EAE]">{timestamp}</p> -->
-		<FlipText/>
+	<div
+		class="{$showSidebar
+			? 'md:hidden'
+			: ''} mr-3 pt-3 mb-3 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+	>
+		<button
+			id="sidebar-toggle-button"
+			class="cursor-pointer px-2 py-2 flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+			on:click={() => {
+				showSidebar.set(!$showSidebar);
+			}}
+		>
+			<div class="m-auto self-center">
+				<MenuLines />
+			</div>
+		</button>
+	</div>
+	<div class="my-auto flex-grow">
+		<p class="text-base font-bold">Hello, {$user.first_name}</p>
+		<p class="text-sm text-[#707EAE]">{timestamp}</p>
+		<!-- <FlipText /> -->
 	</div>
 	<div>
-		<img src={$user?.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${$user?.first_name}+${$user?.last_name}`} alt="" class="w-9 h-9 rounded-full" />
+		<img
+			src={$user?.avatar_link ||
+				`https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${$user?.first_name}+${$user?.last_name}`}
+			alt=""
+			class="w-9 h-9 rounded-full"
+		/>
 	</div>
 </div>
