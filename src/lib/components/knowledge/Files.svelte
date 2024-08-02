@@ -109,7 +109,7 @@ function formatDateToMMDDYYYYWithTime(isoDateString) {
 			{file?.title}
 		</p>
 	</div>
-	<div class="w-20 text-sm text-[#272833] font-semibold dark:text-white">{hit}</div>
+	<div class="w-28 text-sm text-[#272833] font-semibold dark:text-white">{hit}</div>
 	<div class="w-36 text-sm text-[#272833] font-semibold">
 		<Select.Root
 			class="w-full"
@@ -156,7 +156,7 @@ function formatDateToMMDDYYYYWithTime(isoDateString) {
 			src={file?.created_by?.avatar_link ||
 				`https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${file?.created_by?.name}`}
 			alt="avatar"
-			class="w-9 h-9 rounded-full"
+			class="w-8 h-8 rounded-full"
 		/>
 		<p class="text-[#6B6C7E] text-sm dark:text-white truncate">{file?.created_by?.name}</p>
 	</div>

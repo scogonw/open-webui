@@ -270,7 +270,6 @@
 	$: isHomePage = $page.url.pathname === '/';
 	$: isTeamsPage = $page.url.pathname.startsWith('/teams');
 	$: isKnowledeHubPage = $page.url.pathname.startsWith('/knowledge');
-	console.log(isHomePage,isTeamsPage,isKnowledeHubPage);
 </script>
 
 <ArchivedChatsModal

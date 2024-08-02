@@ -17,6 +17,7 @@
 	import UploadDocumentsModal from '$lib/components/teams/UploadDocumentsModal.svelte';
 	import UploadLinkModal from '$lib/components/knowledge/UploadLinkModal.svelte';
 	import DownArrow from '$lib/components/icons/DownArrow.svelte';
+	import EmptyFolderIcon from '$lib/components/icons/EmptyFolderIcon.svelte';
 
 	const access_token = getCookie('access_token');
 
@@ -34,12 +35,16 @@
 		sortOrder = 'desc';
 	}
 
+	let loading = true;
+
 	const fetchFiles = async (token, id) => {
+		loading = true;
 		const data = await getFilesByParent(token, id, sortBy, sortOrder);
 		if (data) {
 			files.set(data);
 		}
 		scrollUp();
+		loading = false;
 	};
 
 	$: parentId = $page.params.folder;
@@ -70,9 +75,9 @@
 </script>
 
 <div class="p-4 md:p-5 md:pt-2 h-[90%] w-full flex flex-col gap-4">
-	<div class="w-full h-20 flex justify-between items-center gap-2">
+	<div class="w-full h-12 flex justify-between items-center gap-2">
 		<div
-			class="w-52 md:w-96 h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"
+			class="w-52 md:w-96 max-h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"
 		>
 			<Search className="size-5 stroke-[#818181]" />
 			<input
@@ -93,105 +98,120 @@
 		</div>
 	</div>
 	<div class="" in:fade={{ duration: 200 }}>
-		{#if breadcrumb}
+		{#if breadcrumb && !loading}
 			<BreadCrumbs {breadcrumb} />
 		{:else}
 			<BreadCrumbs />
 		{/if}
 	</div>
-	<div class="text-[#6B6C7E] font-semibold">Files</div>
-	<div class="w-full flex p-2 text-[#6B6C7E] font-semibold">
-		<div class="w-12" />
-		<div class="w-72 flex-grow flex gap-2 items-center">
-			<button
-				class="px-3 rounded-md hover:bg-[#F3F6FD]"
-				on:click={() => {
-					localStorage.setItem('sortBy', 'title');
-					sortBy = 'title';
-					fetchFiles(access_token, parentId);
-				}}
-			>
-				Name
-			</button>
-			{#if sortBy === 'title'}
-				{#if sortOrder === 'asc'}
-					<button
-						class="rounded-md hover:bg-[#F3F6FD]"
-						on:click={() => {
-							localStorage.setItem('sortOrder', 'desc');
-							sortOrder = 'desc';
-							fetchFiles(access_token, parentId);
-						}}
-					>
-						<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E] transform rotate-180" />
-					</button>
+	<!-- <div class="text-[#6B6C7E] font-semibold">Files</div> -->
+	{#if $files?.length > 0 && !loading}
+		<div class="w-full flex p-2 text-[#6B6C7E] font-semibold">
+			<div class="w-12" />
+			<div class="w-72 flex-grow flex gap-2 items-center">
+				<button
+					class="px-3 rounded-md hover:bg-[#F3F6FD]"
+					on:click={() => {
+						localStorage.setItem('sortBy', 'title');
+						sortBy = 'title';
+						fetchFiles(access_token, parentId);
+					}}
+				>
+					Name
+				</button>
+				{#if sortBy === 'title'}
+					{#if sortOrder === 'asc'}
+						<button
+							class="rounded-md hover:bg-[#F3F6FD]"
+							on:click={() => {
+								localStorage.setItem('sortOrder', 'desc');
+								sortOrder = 'desc';
+								fetchFiles(access_token, parentId);
+							}}
+						>
+							<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E] transform rotate-180" />
+						</button>
+					{/if}
+					{#if sortOrder === 'desc'}
+						<button
+							on:click={() => {
+								localStorage.setItem('sortOrder', 'asc');
+								sortOrder = 'asc';
+								fetchFiles(access_token, parentId);
+							}}
+						>
+							<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E]" />
+						</button>
+					{/if}
 				{/if}
-				{#if sortOrder === 'desc'}
-					<button
-						on:click={() => {
-							localStorage.setItem('sortOrder', 'asc');
-							sortOrder = 'asc';
-							fetchFiles(access_token, parentId);
-						}}
-					>
-						<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E]" />
-					</button>
+			</div>
+			<div class="w-28">Interactions</div>
+			<div class="w-36 pl-2">Access</div>
+			<div class="w-72">Uploaded By</div>
+			<div class="w-36 flex gap-2 items-center">
+				<button
+					class="px-3 rounded-md hover:bg-[#F3F6FD]"
+					on:click={() => {
+						localStorage.setItem('sortBy', 'created_at');
+						sortBy = 'created_at';
+						fetchFiles(access_token, parentId);
+					}}
+				>
+					Date
+				</button>
+				{#if sortBy === 'created_at'}
+					{#if sortOrder === 'asc'}
+						<button
+							on:click={() => {
+								localStorage.setItem('sortOrder', 'desc');
+								sortOrder = 'desc';
+								fetchFiles(access_token, parentId);
+							}}
+						>
+							<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E] transform rotate-180" />
+						</button>
+					{/if}
+					{#if sortOrder === 'desc'}
+						<button
+							on:click={() => {
+								localStorage.setItem('sortOrder', 'asc');
+								sortOrder = 'asc';
+								fetchFiles(access_token, parentId);
+							}}
+						>
+							<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E]" />
+						</button>
+					{/if}
 				{/if}
-			{/if}
+			</div>
+			<div class="w-20 text-center" />
 		</div>
-		<div class="w-20">Used</div>
-		<div class="w-36 pl-2">Access</div>
-		<div class="w-72">Uploaded By</div>
-		<div class="w-36 flex gap-2 items-center">
-			<button
-				class="px-3 rounded-md hover:bg-[#F3F6FD]"
-				on:click={() => {
-					localStorage.setItem('sortBy', 'created_at');
-					sortBy = 'created_at';
-					fetchFiles(access_token, parentId);
-				}}
-			>
-				Date
-			</button>
-			{#if sortBy === 'created_at'}
-				{#if sortOrder === 'asc'}
-					<button
-						on:click={() => {
-							localStorage.setItem('sortOrder', 'desc');
-							sortOrder = 'desc';
-							fetchFiles(access_token, parentId);
-						}}
-					>
-						<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E] transform rotate-180" />
-					</button>
+		<div class="w-full h-svh overflow-y-auto" bind:this={scrollableDiv} in:fade={{ duration: 200 }}>
+			{#each $files as file}
+				{#if file.mime_type === 'application/folder'}
+					<Files {file} />
 				{/if}
-				{#if sortOrder === 'desc'}
-					<button
-						on:click={() => {
-							localStorage.setItem('sortOrder', 'asc');
-							sortOrder = 'asc';
-							fetchFiles(access_token, parentId);
-						}}
-					>
-						<DownArrow className="size-5 stroke-[#6B6C7E] fill-[#6B6C7E]" />
-					</button>
+			{/each}
+			{#each $files as file}
+				{#if file.mime_type !== 'application/folder'}
+					<Files {file} />
 				{/if}
-			{/if}
+			{/each}
 		</div>
-		<div class="w-20 text-center" />
-	</div>
-	<div class="w-full h-svh overflow-y-auto" bind:this={scrollableDiv}>
-		{#each $files as file}
-			{#if file.mime_type === 'application/folder'}
-				<Files {file} />
-			{/if}
-		{/each}
-		{#each $files as file}
-			{#if file.mime_type !== 'application/folder'}
-				<Files {file} />
-			{/if}
-		{/each}
-	</div>
+	{:else if !loading}
+		<div class="w-full h-svh flex justify-center items-center">
+			<div class="flex flex-col items-center text-center gap-2">
+				<EmptyFolderIcon className="size-52 stroke-none" />
+				<h1 class="text-black font-bold text-2xl">Team Knowledge Base is Empty</h1>
+				<p class="text-[#7C7C7C] font-normal text-lg">
+					Add documents securely to our encrypted Knowledge Hub.<br />You control who can access
+					them, anytime you like
+				</p>
+			</div>
+		</div>
+	{:else}
+		<div class="h-svh" />
+	{/if}
 	<UploadDocumentsModal bind:show={showUploadDocumentModal} />
 	<NewFolderModal bind:show={showNewFolderModal} />
 	<UploadLinkModal bind:show={showUploadLinkModal} />

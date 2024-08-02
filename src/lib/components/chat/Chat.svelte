@@ -133,7 +133,7 @@
 
 	onMount(async ()=>{
 		const data = await getAllAiChats(access_token);
-		console.log(data);
+		console.log('All Chats',data);
 	})
 
 	// onMount(async () => {

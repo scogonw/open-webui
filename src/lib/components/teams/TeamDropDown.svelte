@@ -8,16 +8,18 @@
 	import { deleteTeam, getTeams } from '$lib/apis/triton';
 	import { toast } from 'svelte-sonner';
 	import { teams } from '$lib/stores';
+	import { getCookie } from '$lib/utils';
 
 	export let showEditTeamModal;
 	export let team;
 	let show = false;
+	const access_token = getCookie('access_token');
 
 	const handleDelete = async () => {
-		const res = await deleteTeam(team?.uid);
+		const res = await deleteTeam(access_token,team?.uid);
 		if (res) {
 			toast.success('Team Deleted');
-			const teamsdata = await getTeams();
+			const teamsdata = await getTeams(access_token);
 			if (teamsdata) {
 				const { data, metadata } = teamsdata;
 				teams.set(data);

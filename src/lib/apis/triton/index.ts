@@ -1,7 +1,8 @@
 import { toast } from 'svelte-sonner';
 
 const SCOGO_ADMIN_API_K8S_HOST = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST;
-const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST_TEMP;
+const SCOGO_USERS_API_K8S_HOST = import.meta.env.VITE_SCOGO_USERS_API_K8S_HOST;
+// const SCOGO_ADMIN_API_K8S_HOST_TEMP = import.meta.env.VITE_SCOGO_ADMIN_API_K8S_HOST_TEMP;
 const SCOGO_DRIVE_API_K8S_HOST = import.meta.env.VITE_SCOGO_DRIVE_API_K8S_HOST;
 const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
 const SCOGO_CHAT_API_K8S_HOST = import.meta.env.VITE_SCOGO_CHAT_API_K8S_HOST;
@@ -46,15 +47,34 @@ export const logOutUser = async (session_id, session_token, token) => {
 	}
 };
 
-export const getTeams = async (q?, skip?) => {
+export const onBoardOrg = async (token, body) => {
+	try {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/org/triton/onboard`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		if (res.ok) {
+			return true;
+		}
+		toast.error('Error : Unable to onboard organization');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getTeams = async (token, q?, skip?) => {
 	try {
 		const res = await fetch(
-			`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams?limit=6&skip=${skip ? skip : ''}&q=${q ? q : ''}`,
+			`${SCOGO_USERS_API_K8S_HOST}/v1/teams?limit=6&skip=${skip ? skip : ''}&q=${q ? q : ''}`,
 			{
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${tokendev4}`
+					Authorization: `Bearer ${token}`
 				}
 			}
 		);
@@ -68,13 +88,13 @@ export const getTeams = async (q?, skip?) => {
 	}
 };
 
-export const createTeam = async (teamBody) => {
+export const createTeam = async (token, teamBody) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			},
 			body: JSON.stringify(teamBody)
 		});
@@ -88,13 +108,13 @@ export const createTeam = async (teamBody) => {
 	}
 };
 
-export const editTeam = async (id, teamBody) => {
+export const editTeam = async (token, id, teamBody) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams/${id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			},
 			body: JSON.stringify(teamBody)
 		});
@@ -108,13 +128,13 @@ export const editTeam = async (id, teamBody) => {
 	}
 };
 
-export const deleteTeam = async (id) => {
+export const deleteTeam = async (token, id) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams/${id}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			}
 		});
 		if (res.ok) {
@@ -126,17 +146,17 @@ export const deleteTeam = async (id) => {
 	}
 };
 
-export const getTeamMembers = async (id) => {
+export const getTeamMembers = async (token, id) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}/members`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams/${id}/members`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			}
 		});
 		if (res.ok) {
-			const { data } = await res.json();
+			const data = await res.json();
 			return data;
 		}
 		toast.error('Error : Unable to get members of team');
@@ -146,13 +166,13 @@ export const getTeamMembers = async (id) => {
 	}
 };
 
-export const removeMembersFromTeam = async (id, members) => {
+export const removeMembersFromTeam = async (token, id, members) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}/remove`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams/${id}/remove`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			},
 			body: JSON.stringify({ members: members })
 		});
@@ -166,13 +186,13 @@ export const removeMembersFromTeam = async (id, members) => {
 	}
 };
 
-export const addMembersToTeam = async (id, users) => {
+export const addMembersToTeam = async (token, id, users) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/teams/${id}/add`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/teams/${id}/add`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			},
 			body: JSON.stringify({ users: users })
 		});
@@ -188,11 +208,11 @@ export const addMembersToTeam = async (id, users) => {
 
 export const getUsers = async (token) => {
 	try {
-		const res = await fetch(`${SCOGO_ADMIN_API_K8S_HOST_TEMP}/v1/users`, {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/users`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${tokendev4}`
+				Authorization: `Bearer ${token}`
 			}
 		});
 		if (res.ok) {

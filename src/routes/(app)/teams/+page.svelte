@@ -12,6 +12,7 @@
 	import { tick } from 'svelte';
 	import Skeletonteams from '$lib/components/teams/SkeletonTeams.svelte';
 	import { showSidebar } from '$lib/stores';
+	import { getCookie } from '$lib/utils';
 
 
 	// Initialize a tweened value for scale
@@ -201,12 +202,15 @@
 	let showAddTeamModal = false;
 	let timer;
 
+	const access_token = getCookie('access_token')
+
+
 	const handleChange = async () => {
 		console.log(search);
 		if (search) {
 			loading = true;
 			await tick();
-			const teamsdata = await getTeams(search);
+			const teamsdata = await getTeams(access_token,search);
 			if (teamsdata) {
 				const { data, metadata } = teamsdata;
 				teams.set(data);
@@ -215,7 +219,7 @@
 			loading = false;
 		} else {
 			loading = true;
-			const teamsdata = await getTeams();
+			const teamsdata = await getTeams(access_token);
 			if (teamsdata) {
 				const { data, metadata } = teamsdata;
 				teams.set(data);
@@ -232,7 +236,7 @@
 	const handleScroll =async () => {
 		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 10;
 		if(isAtBottom && metadataOfTeams?.has_more){
-			const teamsdata = await getTeams(search ? search : '',metadataOfTeams?.limit*metadataOfTeams?.page);
+			const teamsdata = await getTeams(access_token,search ? search : '',metadataOfTeams?.limit*metadataOfTeams?.page);
 			if(teamsdata){
 				const { data, metadata } = teamsdata;
 				teams.update(prev => [...prev,...data]);
@@ -244,7 +248,7 @@
 
 	onMount(async () => {
 		loading = true;
-		const teamsdata = await getTeams();
+		const teamsdata = await getTeams(access_token);
 		if (teamsdata) {
 			const { data, metadata } = teamsdata;
 			teams.set(data);

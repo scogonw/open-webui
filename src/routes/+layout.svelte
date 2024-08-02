@@ -15,7 +15,10 @@
 		mobile,
 		socket,
 		activeUserCount,
-		USAGE_POOL
+		USAGE_POOL,
+
+		connectToNats
+
 	} from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -216,7 +219,11 @@
 
 					if (sessionUser) {
 						// Save Session User to Store
+						if(sessionUser.status === "PROFILE_PENDING"){
+							await goto('/auth/onboarding');
+						}
 						await user.set(sessionUser);
+						await connectToNats(access_token);
 					} else {
 						// Redirect Invalid Session User to /auth Page
 						localStorage.removeItem('token');

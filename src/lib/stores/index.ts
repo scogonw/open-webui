@@ -3,6 +3,7 @@ import { type Writable, writable } from 'svelte/store';
 import type { GlobalModelConfig, ModelConfig } from '$lib/apis';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
+import { connect, StringCodec } from 'nats.ws';
 
 // Backend
 export const WEBUI_NAME = writable(APP_NAME);
@@ -11,6 +12,78 @@ export const user: Writable<SessionUser | undefined> = writable(undefined);
 export const teams = writable([]);
 export const files = writable([]);
 export const allUsers = writable([]);
+
+export const natsStatus = writable('Disconnected');
+export const natsMessages = writable([]);
+export const natsError = writable(null);
+
+let nc;
+const sc = StringCodec();
+let callback;
+let currentSubscription;
+
+export async function connectToNats(token) {
+	console.log('Nats Connecting...');
+	try {
+		nc = await connect({ servers: ['wss://websocket.development.scogo.ai'], token: token });
+		nc.publish('chat.1', sc.encode('hello'));
+		natsStatus.set('Connected');
+		console.log('Nats Connected');
+	} catch (error) {
+		console.error('Error connecting to NATS:', error);
+		natsStatus.set('Error');
+		natsError.set(error.message);
+	}
+}
+
+export async function subscribeToTopic(topic) {
+	if (!nc) {
+		console.error('NATS connection is not established.');
+		return;
+	}
+
+	// Unsubscribe from the current topic if subscribed
+	if (currentSubscription) {
+		currentSubscription.unsubscribe();
+	}
+
+	// Subscribe to the new topic
+	try {
+		currentSubscription = nc.subscribe(topic);
+
+		(async () => {
+			for await (const message of currentSubscription) {
+				const decodedMessage = sc.decode(message.data);
+				console.log(`Received message on ${topic}: ${decodedMessage}`);
+				natsMessages.update((msgs) => [...msgs, decodedMessage]);
+
+				// Fire the callback if defined
+				if (callback) {
+					callback(decodedMessage);
+				}
+			}
+		})().catch((err) => {
+			console.error('Subscription error:', err);
+			natsError.set(err.message);
+		});
+	} catch (error) {
+		console.error(`Error subscribing to topic ${topic}:`, error);
+		natsError.set(error.message);
+	}
+}
+
+// Function to set the callback for received messages
+export function setNatsCallback(cb) {
+	callback = cb;
+}
+
+// Function to close the connection
+export function closeNatsConnection() {
+	if (nc) {
+		nc.close();
+		natsStatus.set('Disconnected');
+	}
+}
 
 // Frontend
 export const MODEL_DOWNLOAD_POOL = writable({});
@@ -174,4 +247,5 @@ type SessionUser = {
 	profile_image_url: string;
 	org: string;
 	avatar_link: string;
+	status: string;
 };

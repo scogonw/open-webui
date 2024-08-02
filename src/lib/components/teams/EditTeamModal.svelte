@@ -7,9 +7,10 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import { editTeam, getUsers } from '$lib/apis/triton';
+	import { editTeam } from '$lib/apis/triton';
 	import { allUsers, teams, user } from '$lib/stores';
 	import { writable } from 'svelte/store';
+	import { getCookie } from '$lib/utils';
 
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
@@ -27,6 +28,7 @@
 	export let team;
 	export let show = false;
 	let name = team?.name;
+	const access_token = getCookie('access_token');
 
 	let selectedUserIds = writable(new Set());
 
@@ -43,7 +45,7 @@
 	}
 
 	const handleclick = async () => {
-		const editedTeam = await editTeam(team?.uid, {
+		const editedTeam = await editTeam(access_token,team?.uid, {
 			name: name,
 			type: 'INTERNAL'
 		});
@@ -59,15 +61,6 @@
 			show = false;
 		}
 	};
-
-	// onMount(async () => {
-	// 	if ($allUsers.length === 0) {
-	// 		const data = await getUsers();
-	// 		if (data) {
-	// 			allUsers.set(data);
-	// 		}
-	// 	}
-	// });
 </script>
 
 <Modal size="w-[26rem]" bind:show>
@@ -146,8 +139,8 @@
 					{/each}
 				{/if}
 			</div>
-			<hr>
-			<button class="bg-black text-white px-5 py-2 rounded-lg w-full m-auto" on:click={handleclick}
+			<hr class="dark:border-gray-800" />
+			<button class="bg-black hover:bg-gray-850 text-white px-5 py-2 rounded-lg w-full m-auto" on:click={handleclick}
 				>Submit</button
 			>
 		</div>

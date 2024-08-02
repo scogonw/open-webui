@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import { getTeamMembers, removeMembersFromTeam } from '$lib/apis/triton';
 	import { toast } from 'svelte-sonner';
+	import { getCookie } from '$lib/utils';
 
 	export let team;
 	let showEditTeamModal = false;
@@ -19,20 +20,22 @@
 
 	let container;
 	let isAtBottom = false;
+	const access_token = getCookie('access_token');
 
 	const handleScroll = () => {
 		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight;
 	};
 
 	const handleRemove = async (uid, name) => {
-		const removed = await removeMembersFromTeam(team?.uid, uid);
+		const removed = await removeMembersFromTeam(access_token, team?.uid, [uid]);
 		if (removed) {
 			toast.success(`${name} has been removed`);
 		}
 	};
 
 	onMount(async () => {
-		// members = await getTeamMembers(team?.uid); // change to this  instead of top 5 after taha is done
+		members = await getTeamMembers(access_token, team?.uid); // change to this  instead of top 5 after taha is done
+		console.log(members);
 	});
 </script>
 
@@ -79,10 +82,45 @@
 			<!-- <img src={team.agent.avatar} alt="Profile" class="rounded-full w-9 h-9" />
 			<h2 class="text-xs font-medium">{team.agent.name}</h2> -->
 		</div>
-		{#if team.members.length > 0}
+		{#if members?.length > 0}
+			{#each members as user}
+				<div class="flex items-center gap-3 cursor-pointer group/user">
+					<img
+						src={user?.avatar_link ||
+							`https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`}
+						alt="Profile"
+						class="rounded-full w-9 h-9"
+					/>
+					<div class="flex-grow">
+						<h2 class="text-xs font-medium">{`${user.first_name} ${user.last_name}`}</h2>
+						<h2 class="text-xs font-medium text-[#90A0B7]">{user.email}</h2>
+					</div>
+					{#if user.role}
+						<div class="text-[10px] text-[#90A0B7] ml-auto group-hover/user:hidden">
+							{user.role}
+						</div>
+					{/if}
+					<Tooltip content={'Remove'} className={'ml-auto'}>
+						<button
+							class="text-[10px] text-[#90A0B7] hidden group-hover/user:block"
+							on:click={() => {
+								handleRemove(user?.uid, user?.name);
+							}}
+						>
+							<Cross className="size-5  translate-x-1/4 translate-y-1/4" />
+						</button>
+					</Tooltip>
+				</div>
+			{/each}
+		{:else if team.members.length > 0}
 			{#each team.members as user}
 				<div class="flex items-center gap-3 cursor-pointer group/user">
-					<img src={user?.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`} alt="Profile" class="rounded-full w-9 h-9" />
+					<img
+						src={user?.avatar_link ||
+							`https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`}
+						alt="Profile"
+						class="rounded-full w-9 h-9"
+					/>
 					<div class="flex-grow">
 						<h2 class="text-xs font-medium">{user.name}</h2>
 						<h2 class="text-xs font-medium text-[#90A0B7]">{user.email}</h2>

@@ -30,6 +30,8 @@
 
 	let teamName = '';
 
+	const access_token = getCookie('access_token');
+
 	let selectedUserIds = writable(new Set());
 
 	function toggleUserSelection(userId) {
@@ -45,25 +47,28 @@
 	}
 
 	const handleclick = async () => {
-		if (teamName) {
-			const selectedIdsArray = Array.from($selectedUserIds);
-			const newTeam = await createTeam({
+		const selectedIdsArray = Array.from($selectedUserIds);
+		if (teamName && selectedIdsArray?.length > 0) {
+			const newTeam = await createTeam(access_token, {
 				name: teamName,
 				type: 'INTERNAL',
 				description: 'EMPTY',
 				org: `${$user.org}`,
-				users: []
+				users: selectedIdsArray
 			});
 			if (newTeam) {
-				// const addedMembers = await addMembersToTeam(newTeam?.uid,selectedIdsArray);
+				// const addedMembers = await addMembersToTeam(access_token,newTeam?.uid,selectedIdsArray);
 				teams.update((prev) => [newTeam, ...prev]); // as team is being sent right now from api
 				toast.success(`Team ${teamName} created`);
+				teamName = '';
+				selectedUserIds.set(new Set());
 				show = false;
 			}
 		}
+		else{
+			toast.error('Select atleast one user');
+		}
 	};
-
-	const access_token = getCookie('access_token');
 
 	onMount(async () => {
 		if ($allUsers.length === 0) {
@@ -149,7 +154,8 @@
 					</div>
 				{/each}
 			</div>
-			<button class="bg-black text-white px-5 py-2 rounded-lg w-fit m-auto" on:click={handleclick}
+			<hr class="dark:border-gray-800" />
+			<button class="bg-black text-white px-5 py-2 rounded-lg w-full m-auto" on:click={handleclick}
 				>Submit</button
 			>
 		</div>
