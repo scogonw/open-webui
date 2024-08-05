@@ -104,7 +104,7 @@
 						<button
 							class="text-[10px] text-[#90A0B7] hidden group-hover/user:block"
 							on:click={() => {
-								handleRemove(user?.uid, user?.name);
+								handleRemove(user?.uid, user?.name || user?.first_name);
 							}}
 						>
 							<Cross className="size-5  translate-x-1/4 translate-y-1/4" />

@@ -14,7 +14,6 @@
 	import { showSidebar } from '$lib/stores';
 	import { getCookie } from '$lib/utils';
 
-
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
 		duration: 50, // Fast transition duration
@@ -202,15 +201,13 @@
 	let showAddTeamModal = false;
 	let timer;
 
-	const access_token = getCookie('access_token')
-
+	const access_token = getCookie('access_token');
 
 	const handleChange = async () => {
-		console.log(search);
 		if (search) {
 			loading = true;
 			await tick();
-			const teamsdata = await getTeams(access_token,search);
+			const teamsdata = await getTeams(access_token, search);
 			if (teamsdata) {
 				const { data, metadata } = teamsdata;
 				teams.set(data);
@@ -233,18 +230,24 @@
 	let isAtBottom = false;
 	let metadataOfTeams;
 
-	const handleScroll =async () => {
+	const handleScroll = async () => {
 		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 10;
-		if(isAtBottom && metadataOfTeams?.has_more){
-			const teamsdata = await getTeams(access_token,search ? search : '',metadataOfTeams?.limit*metadataOfTeams?.page);
-			if(teamsdata){
+		if (
+			isAtBottom &&
+			metadataOfTeams?.total_count > metadataOfTeams?.limit * metadataOfTeams?.page
+		) {
+			const teamsdata = await getTeams(
+				access_token,
+				search ? search : '',
+				metadataOfTeams?.limit * metadataOfTeams?.page
+			);
+			if (teamsdata) {
 				const { data, metadata } = teamsdata;
-				teams.update(prev => [...prev,...data]);
+				teams.update((prev) => [...prev, ...data]);
 				metadataOfTeams = metadata;
 			}
 		}
 	};
-
 
 	onMount(async () => {
 		loading = true;
@@ -258,7 +261,7 @@
 	});
 </script>
 
-<div class="p-4 md:pr-5 md:pl-5  md:pt-2 h-[90%] w-full flex flex-col">
+<div class="p-4 md:pr-5 md:pl-5 md:pt-2 h-[90%] w-full flex flex-col">
 	<div class="w-full py-2 flex justify-between items-center">
 		<div
 			class="w-52 md:w-96 h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"

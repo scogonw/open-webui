@@ -62,10 +62,7 @@
 							>
 								<img
 									crossorigin="anonymous"
-									src={model?.info?.meta?.profile_image_url ??
-										($i18n.language === 'dg-DG'
-											? `/doge.png`
-											: `${WEBUI_BASE_URL}/static/favicon.png`)}
+									src='/logo.png'
 									class="size-[5rem] md:size-[6rem] rounded-full"
 									alt="logo"
 									draggable="false"

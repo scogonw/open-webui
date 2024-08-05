@@ -225,6 +225,26 @@ export const getUsers = async (token) => {
 	}
 };
 
+export const inviteUser = async (token, body) => {
+	try {
+		const res = await fetch(`${SCOGO_USERS_API_K8S_HOST}/v1/users/invite/link`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify(body)
+		});
+		if (res.ok) {
+			console.log(await res.json());
+			return true;
+		}
+		toast.error('Error: Unable to invite user');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 export const getDriveList = async (token) => {
 	try {
 		const res = await fetch(`${SCOGO_DRIVE_API_K8S_HOST}/v1/my-drive/resources`, {

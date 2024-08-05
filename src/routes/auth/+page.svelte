@@ -14,13 +14,20 @@
 
 	let loaded = false;
 	let mode = 'signin';
+	const params = new URLSearchParams($page.url.search);
+	const signup = params.get('signup');
+	if(signup){
+		mode = 'signup'
+	}
+
 
 	let firstName = '';
 	let lastName = '';
-	let email = '';
+	let email = params.get('email') || '';
 	let mobile = null;
 	let password = '';
 	let loading = false;
+	let inviteId = params.get('inviteId') || '';
 
 	const ZITADEL_BASE_URL = import.meta.env.VITE_ZITADEL_DOMAIN;
 	const ZITADEL_SERVICE_ACCESS_TOKEN = import.meta.env.VITE_ZITADEL_SERVICE_ACCESS_TOKEN;
@@ -139,6 +146,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
+					inviteId,
 					firstName,
 					lastName,
 					mobile,
@@ -217,7 +225,6 @@
 		if ($user !== undefined) {
 			await goto('/');
 		}
-		await checkOauthCallback();
 		loaded = true;
 		if (($config?.features.auth_trusted_header ?? false) || $config?.features.auth === false) {
 			await signInHandler();
@@ -253,7 +260,7 @@
 			<div class=" self-center">
 				<img
 					crossorigin="anonymous"
-					src="{WEBUI_BASE_URL}/static/favicon.png"
+					src="/logo.png"
 					class=" w-8 rounded-full"
 					alt="logo"
 				/>

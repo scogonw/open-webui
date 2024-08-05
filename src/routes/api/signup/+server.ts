@@ -5,7 +5,7 @@ const SCOGO_AUTH_API_K8S_HOST = import.meta.env.VITE_SCOGO_AUTH_API_K8S_HOST;
 export async function POST({ request }) {
 	try {
 		const body = await request.json();
-		const { firstName, lastName, mobile, email, password } = body;
+		const { inviteId, firstName, lastName, mobile, email, password } = body;
 		const falsie = ['', null, undefined];
 		console.log(body);
 		if (
@@ -22,16 +22,24 @@ export async function POST({ request }) {
 			});
 		}
 
-		const res = await fetch(`${SCOGO_AUTH_API_K8S_HOST}/v1/auth/signup`, {
+		let url = `${SCOGO_AUTH_API_K8S_HOST}/v1/auth/signup`;
+		let bodyForRequest = {
+			first_name: firstName,
+			last_name: lastName,
+			mobile: mobile,
+			email: email,
+			password: password
+		};
+
+		if (!falsie.includes(inviteId)) {
+			url = `${SCOGO_AUTH_API_K8S_HOST}/v1/auth/invite/accept`;
+			bodyForRequest = { invite_id: inviteId, ...bodyForRequest };
+		}
+
+		const res = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				first_name: firstName,
-				last_name: lastName,
-				mobile: mobile,
-				email: email,
-				password: password
-			})
+			body: JSON.stringify(bodyForRequest)
 		});
 
 		if (res.ok) {

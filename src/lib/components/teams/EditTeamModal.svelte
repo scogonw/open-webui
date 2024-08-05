@@ -7,10 +7,11 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import { editTeam } from '$lib/apis/triton';
+	import { editTeam, inviteUser } from '$lib/apis/triton';
 	import { allUsers, teams, user } from '$lib/stores';
 	import { writable } from 'svelte/store';
 	import { getCookie } from '$lib/utils';
+	import { toast } from 'svelte-sonner';
 
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
@@ -27,6 +28,7 @@
 
 	export let team;
 	export let show = false;
+	let inviteEmail = '';
 	let name = team?.name;
 	const access_token = getCookie('access_token');
 
@@ -44,8 +46,8 @@
 		});
 	}
 
-	const handleclick = async () => {
-		const editedTeam = await editTeam(access_token,team?.uid, {
+	const handleSubmit = async () => {
+		const editedTeam = await editTeam(access_token, team?.uid, {
 			name: name,
 			type: 'INTERNAL'
 		});
@@ -58,7 +60,24 @@
 					return e;
 				});
 			});
+			inviteEmail = '';
+			name = editedTeam?.name;
 			show = false;
+			toast.success('Team name updated');
+		}
+	};
+
+	const invteByEmail = async () => {
+		const body = {
+			invitationTo: 'TEAM',
+			email: inviteEmail,
+			id: team?.uid
+		};
+		const invited = await inviteUser(access_token, body);
+		if (invited) {
+			inviteEmail = '';
+			show = false;
+			toast.success('User invitation email sent');
 		}
 	};
 </script>
@@ -92,15 +111,20 @@
 			>
 			<div class="w-full flex gap-2">
 				<input
-					type="text"
+					type="email"
 					id="team-members"
-					placeholder="Invite by name or type email"
+					placeholder="Invite by email"
+					autocomplete="email"
 					class="outline-none flex-grow py-2 px-4 rounded-lg border dark:bg-gray-800 border-[#E2E4EA] dark:border-gray-800 dark:text-white dark:caret-white"
+					bind:value={inviteEmail}
 				/>
 				<button
 					class="w-20 bg-[#213BFD] text-white border border-[#1B5AC2] rounded-lg hover:bg-[#1B5AC2]"
 					style="transform: scale({$scale});"
-					on:click={handleClick}>Invite</button
+					on:click={() => {
+						invteByEmail();
+						handleClick();
+					}}>Invite</button
 				>
 			</div>
 			<hr class="dark:border-gray-800" />
@@ -126,7 +150,8 @@
 							</Checkbox.Root>
 							<div class="w-full flex items-center gap-5 group/user">
 								<img
-									src={user.avatar_link || `https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`}
+									src={user.avatar_link ||
+										`https://ui-avatars.com/api/?background=5d6d73&color=ffffff&name=${user?.name}`}
 									alt="Profile"
 									class="rounded-full w-9 h-9 md:w-11 md:h-11"
 								/>
@@ -140,8 +165,9 @@
 				{/if}
 			</div>
 			<hr class="dark:border-gray-800" />
-			<button class="bg-black hover:bg-gray-850 text-white px-5 py-2 rounded-lg w-full m-auto" on:click={handleclick}
-				>Submit</button
+			<button
+				class="bg-black hover:bg-gray-850 text-white px-5 py-2 rounded-lg w-full m-auto"
+				on:click={handleSubmit}>Submit</button
 			>
 		</div>
 	</div>
