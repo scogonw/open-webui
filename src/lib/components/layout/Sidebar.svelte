@@ -11,7 +11,13 @@
 		showSidebar,
 		mobile,
 		showArchivedChats,
-		theme
+		theme,
+
+		currentChatId,
+
+		currentChat
+
+
 	} from '$lib/stores';
 	import { onMount, getContext, tick } from 'svelte';
 
@@ -48,6 +54,7 @@
 	import { logOutUser } from '$lib/apis/triton';
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, cubicOut, linear } from 'svelte/easing';
+	import ChatIcon from '../icons/ChatIcon.svelte';
 
 	// Initialize a tweened value for scale
 	const scale = tweened(1, {
@@ -320,15 +327,16 @@
 			class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400"
 			in:fade={{ duration: 200, delay: 200 }}
 		>
-			<a
+			<button
 				id="sidebar-new-chat-button"
 				class="flex flex-1 justify-center rounded-xl px-2 py-1.5 bg-black border-none hover:bg-gray-850 dark:bg-gray-850 dark:hover:bg-gray-800 transition-all"
-				href="/"
 				style="transform: scale({$scale});"
 				on:click={handleClick}
 				draggable="false"
 				on:click={async () => {
 					selectedChatId = null;
+					currentChatId.set(null);
+					currentChat.set([]);
 					await goto('/');
 					const newChatButton = document.getElementById('new-chat-button');
 					setTimeout(() => {
@@ -360,7 +368,7 @@
 						/>
 					</svg>
 				</div> -->
-			</a>
+			</button>
 
 			<button
 				class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition"
@@ -450,6 +458,23 @@
 					class:font-semibold={isHomePage}
 				>
 					Home
+				</div>
+			</button>
+			<button
+				class=" flex rounded-xl py-3 px-3.5 w-full hover:bg-[#F3F6FD] dark:hover:bg-gray-850 transition group" 
+				on:click={() => {
+					// goto('/');
+				}}
+			>
+				<div class=" self-center mr-3">
+					<ChatIcon
+						className={`size-5 dark:fill-white ${isHomePage ? 'fill-black' : 'fill-[#676F82]'}`}
+					/>
+				</div>
+				<div
+					class="self-center font-medium group-hover:translate-x-1 transition-all"
+				>
+					Chats
 				</div>
 			</button>
 			<button

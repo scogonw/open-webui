@@ -29,6 +29,7 @@
 	const handleRemove = async (uid, name) => {
 		const removed = await removeMembersFromTeam(access_token, team?.uid, [uid]);
 		if (removed) {
+			members = members.filter(e=>e?.uid !== uid);
 			toast.success(`${name} has been removed`);
 		}
 	};
@@ -40,7 +41,7 @@
 </script>
 
 <div
-	class="h-[22rem] w-96 rounded-xl flex flex-col border border-[#E5E5E580] dark:border-gray-800 shadow-md overflow-hidden text-black dark:text-white relative group"
+	class="h-[22rem] w-[31%] rounded-xl flex flex-col border border-[#E5E5E580] dark:border-gray-800 shadow-md overflow-hidden text-black dark:text-white relative group"
 	in:fade={{ duration: 200 }}
 >
 	<div

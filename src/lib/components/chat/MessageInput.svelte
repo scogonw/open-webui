@@ -44,6 +44,9 @@
 
 	const i18n = getContext('i18n');
 
+	export let siaPrompt = '';
+	export let submitSiaPrompt: Function;
+
 	export let transparentBackground = false;
 
 	export let submitPrompt: Function;
@@ -718,7 +721,7 @@
 									placeholder={chatInputPlaceholder !== ''
 										? chatInputPlaceholder
 										: $i18n.t('Send a Message')}
-									bind:value={prompt}
+									bind:value={siaPrompt}
 									on:keypress={(e) => {
 										if (
 											!$mobile ||
@@ -734,8 +737,8 @@
 											}
 
 											// Submit the prompt when Enter key is pressed
-											if (prompt !== '' && e.key === 'Enter' && !e.shiftKey) {
-												submitPrompt(prompt);
+											if (siaPrompt !== '' && e.key === 'Enter' && !e.shiftKey) {
+												submitSiaPrompt();
 											}
 										}
 									}}

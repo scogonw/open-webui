@@ -66,10 +66,10 @@ export const onBoardOrg = async (token, body) => {
 	}
 };
 
-export const getTeams = async (token, q?, skip?) => {
+export const getTeams = async (token, q?, skip = 0) => {
 	try {
 		const res = await fetch(
-			`${SCOGO_USERS_API_K8S_HOST}/v1/teams?limit=6&skip=${skip ? skip : ''}&q=${q ? q : ''}`,
+			`${SCOGO_USERS_API_K8S_HOST}/v1/teams?limit=6&skip=${skip}&q=${q ? q : ''}`,
 			{
 				method: 'GET',
 				headers: {

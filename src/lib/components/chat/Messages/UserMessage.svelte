@@ -57,37 +57,26 @@
 	};
 </script>
 
-<div class=" flex w-full user-message" dir={$settings.chatDirection}>
-	{#if !($settings?.chatBubble ?? true)}
-		<ProfileImage
-			src={message.user
-				? $models.find((m) => m.id === message.user)?.info?.meta?.profile_image_url ?? '/user.png'
-				: user?.profile_image_url ?? '/user.png'}
-		/>
-	{/if}
+<div class=" flex w-full user-message" dir={'LTR'}>
+	<!-- <ProfileImage src={message?.author?.avatar_link || '/user.png'} /> -->
 	<div class="w-full overflow-hidden pl-1">
-		{#if !($settings?.chatBubble ?? true)}
-			<div>
-				<Name>
-					{#if message.user}
-						{$i18n.t('You')}
-						<span class=" text-gray-500 text-sm font-medium">{message?.user ?? ''}</span>
-					{:else if $settings.showUsername || $_user.name !== user.name}
-						{user.name}
-					{:else}
-						{$i18n.t('You')}
-					{/if}
+		<!-- <div>
+			<Name>
+				{#if message?.author}
+					{$i18n.t('You')}
+				{:else if $settings.showUsername || $_user.name !== user.name}
+					{user.name}
+				{:else}
+					{$i18n.t('You')}
+				{/if}
 
-					{#if message.timestamp}
-						<span
-							class=" invisible group-hover:visible text-gray-400 text-xs font-medium uppercase"
-						>
-							{dayjs(message.timestamp * 1000).format($i18n.t('h:mm a'))}
-						</span>
-					{/if}
-				</Name>
-			</div>
-		{/if}
+				{#if message.created_at}
+					<span class=" invisible group-hover:visible text-gray-400 text-xs font-medium uppercase">
+						{dayjs(message.created_at * 1000).format($i18n.t('h:mm a'))}
+					</span>
+				{/if}
+			</Name>
+		</div> -->
 
 		<div
 			class="prose chat-{message.role} w-full max-w-full flex flex-col justify-end dark:prose-invert prose-headings:my-0 prose-p:my-0 prose-p:-mb-4 prose-pre:my-0 prose-table:my-0 prose-blockquote:my-0 prose-img:my-0 prose-ul:-my-4 prose-ol:-my-4 prose-li:-my-3 prose-ul:-mb-6 prose-ol:-mb-6 prose-li:-mb-4 whitespace-pre-line"
@@ -254,13 +243,9 @@
 				</div>
 			{:else}
 				<div class="w-full">
-					<div class="flex {$settings?.chatBubble ?? true ? 'justify-end' : ''} mb-2">
+					<div class="flex justify-end mb-2">
 						<div
-							class="rounded-3xl {$settings?.chatBubble ?? true
-								? `max-w-[90%] px-5 py-2  bg-gray-50 dark:bg-gray-850 ${
-										message.files ? 'rounded-tr-lg' : ''
-								  }`
-								: ''}  "
+							class="rounded-3xl max-w-[90%] px-5 py-2  bg-gray-50 dark:bg-gray-850"
 						>
 							<pre id="user-message">{message.content}</pre>
 						</div>

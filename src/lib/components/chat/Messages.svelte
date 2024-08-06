@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { v4 as uuidv4 } from 'uuid';
-	import { chats, config, settings, user as _user, mobile } from '$lib/stores';
+	import { chats, config, settings, user as _user, mobile, currentChat } from '$lib/stores';
 	import { tick, getContext, onMount } from 'svelte';
 
 	import { toast } from 'svelte-sonner';
@@ -33,6 +33,7 @@
 	export let autoScroll;
 	export let history = {};
 	export let messages = [];
+	export let chatStream = [];
 
 	export let selectedModels;
 
@@ -257,7 +258,6 @@
 	};
 
 	let isSheetOpen = false;
-	console.log($mobile, 'mobile');
 </script>
 
 <div class="h-full flex overflow-hidden relative">
@@ -278,7 +278,7 @@
 			<HistorySheet />
 		</Sheet>
 	{/if}
-	{#if messages.length == 0}
+	{#if $currentChat.length == 0}
 		<Placeholder
 			modelIds={selectedModels}
 			submitPrompt={async (p) => {
@@ -317,33 +317,40 @@
 			}}
 		/>
 	{:else}
-		<div class="w-full pt-2">
-			{#key chatId}
-				{#each messages as message, messageIdx}
-					<div class=" w-full {messageIdx === messages.length - 1 ? ' pb-12' : ''}">
-						<div
-							class="flex flex-col justify-between px-5 mb-3 {$settings?.widescreenMode ?? null
-								? 'max-w-full'
-								: 'max-w-5xl'} mx-auto rounded-lg group"
-						>
-							{#if message.role === 'user'}
-								<UserMessage
-									on:delete={() => deleteMessageHandler(message.id)}
-									{user}
-									{readOnly}
-									{message}
-									isFirstMessage={messageIdx === 0}
-									siblings={message.parentId !== null
-										? history.messages[message.parentId]?.childrenIds ?? []
-										: Object.values(history.messages)
-												.filter((message) => message.parentId === null)
-												.map((message) => message.id) ?? []}
-									{confirmEditMessage}
-									{showPreviousMessage}
-									{showNextMessage}
-									copyToClipboard={copyToClipboardWithToast}
-								/>
-							{:else if $mobile || (history.messages[message.parentId]?.models?.length ?? 1) === 1}
+		<div class="w-full pt-2 overflow-y-auto" id="sia-message-container">
+			{#each $currentChat as message, messageIdx}
+				<div class=" w-full {messageIdx === messages.length - 1 ? ' pb-12' : ''}">
+					<div
+						class="flex flex-col justify-between px-5 mb-3 {$settings?.widescreenMode ?? null
+							? 'max-w-full'
+							: 'max-w-5xl'} mx-auto rounded-lg group"
+					>
+						{#if message?.author?.is_agent === false}
+							<UserMessage
+								on:delete={() => deleteMessageHandler(message.id)}
+								{user}
+								{readOnly}
+								{message}
+								isFirstMessage={messageIdx === 0}
+								siblings={message.parentId !== null
+									? history.messages[message.parentId]?.childrenIds ?? []
+									: Object.values(history.messages)
+											.filter((message) => message.parentId === null)
+											.map((message) => message.id) ?? []}
+								{confirmEditMessage}
+								{showPreviousMessage}
+								{showNextMessage}
+								copyToClipboard={copyToClipboardWithToast}
+							/>
+						{:else}
+							<div class="w-full">
+								<div class="flex justify-start mb-2">
+									<div class="rounded-3xl max-w-[90%] px-5 py-2 bg-gray-50 dark:bg-gray-850">
+										<pre id="user-message">{message?.content}</pre>
+									</div>
+								</div>
+							</div>
+							<!-- {:else if $mobile || (history.messages[message.parentId]?.models?.length ?? 1) === 1}
 								{#key message.id && history.currentId}
 									<ResponseMessage
 										{message}
@@ -370,8 +377,8 @@
 										}}
 									/>
 								{/key}
-							{:else}
-								{#key message.parentId}
+							{:else} -->
+							<!-- {#key message.parentId}
 									<CompareMessages
 										bind:history
 										{messages}
@@ -401,16 +408,15 @@
 											}
 										}}
 									/>
-								{/key}
-							{/if}
-						</div>
+								{/key} -->
+						{/if}
 					</div>
-				{/each}
+				</div>
+			{/each}
 
-				{#if bottomPadding}
-					<div class="  pb-6" />
-				{/if}
-			{/key}
+			{#if bottomPadding}
+				<div class="  pb-6" />
+			{/if}
 		</div>
 	{/if}
 </div>

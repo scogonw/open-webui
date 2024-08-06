@@ -25,7 +25,12 @@
 		user,
 		socket,
 		showCallOverlay,
-		tools
+		tools,
+		allChatMappings,
+		currentChatId,
+		currentChat,
+		setNatsCallback,
+		subscribeToTopic
 	} from '$lib/stores';
 	import {
 		convertMessagesToHistory,
@@ -62,7 +67,7 @@
 	import CallOverlay from './MessageInput/CallOverlay.svelte';
 	import { error } from '@sveltejs/kit';
 	import NewNavbar from '../layout/NewNavbar.svelte';
-	import { getAllAiChats } from '$lib/apis/triton';
+	import { getAllAiChats, sendMessageInChatMapping } from '$lib/apis/triton';
 
 	const i18n: Writable<i18nType> = getContext('i18n');
 
@@ -92,6 +97,7 @@
 
 	let title = '';
 	let prompt = '';
+	let siaPrompt = '';
 	let files = [];
 	let messages = [];
 	let history = {
@@ -131,10 +137,12 @@
 
 	const access_token = getCookie('access_token');
 
-	onMount(async ()=>{
+	onMount(async () => {
 		const data = await getAllAiChats(access_token);
-		console.log('All Chats',data);
-	})
+		if (data) {
+			allChatMappings.set(data);
+		}
+	});
 
 	// onMount(async () => {
 	// 	const onMessageHandler = async (event) => {
@@ -360,6 +368,84 @@
 	//////////////////////////
 	// Chat functions
 	//////////////////////////
+	const scrollSiaToBottom = () => {
+		const element = document.getElementById('sia-message-container');
+		element.scrollTop = element.scrollHeight;
+	};
+
+	let chatStream = [];
+
+	const callbackForNats = async (chunk) => {
+		const parsedChunk = JSON.parse(chunk);
+		const { data, is_agent, metadata } = parsedChunk;
+
+		if(['',null,undefined,false].includes(is_agent)){
+			return;
+		}
+
+		chatStream = [...chatStream, data];
+
+		if (metadata?.finish_reason) {
+			console.log($currentChat)
+			chatStream = [];
+			return;
+		}
+
+		const body = {
+			author: {
+				is_agent: true
+			},
+			content: chatStream.join(' ').trim()
+		};
+
+		if ($currentChat[$currentChat?.length - 1]?.author?.is_agent) {
+			const updatedChat = $currentChat.map((message, index) => {
+				if (index === $currentChat.length - 1) {
+					return body;
+				}
+				return message;
+			});
+			currentChat.set(updatedChat);
+		} else {
+			currentChat.update((prev) => [...prev, body]);
+		}
+		await tick();
+		scrollSiaToBottom();
+	};
+
+	const submitSiaPrompt = async () => {
+		console.log(siaPrompt);
+		const chatTextAreaElement = document.getElementById('chat-textarea');
+
+		if (chatTextAreaElement) {
+			chatTextAreaElement.value = '';
+			chatTextAreaElement.style.height = '';
+		}
+		let body = {
+			content: siaPrompt,
+			type: 'DEFAULT'
+		};
+
+		let id = $currentChatId;
+
+		setNatsCallback(callbackForNats);
+		if (!id) {
+			id = 'GPT';
+			const data = await sendMessageInChatMapping(access_token, id, body);
+			if (data) {
+				currentChatId.set(data?.chat_id);
+				currentChat.set([data]);
+				subscribeToTopic(`chat.${data.chat_id}.messages`);
+			}
+		} else {
+			const data = await sendMessageInChatMapping(access_token, id, body);
+			if (data) {
+				currentChat.update((prev) => [...prev, data]);
+			}
+		}
+		await tick();
+		scrollSiaToBottom();
+	};
 
 	const submitPrompt = async (userPrompt, { _raw = false } = {}) => {
 		let _responses = [];
@@ -1455,12 +1541,14 @@
 						{sendPrompt}
 						{continueGeneration}
 						{regenerateResponse}
+						{chatStream}
 					/>
 				</div>
 			</div>
 			<MessageInput
 				bind:files
 				bind:prompt
+				bind:siaPrompt
 				bind:autoScroll
 				bind:selectedToolIds
 				bind:webSearchEnabled
@@ -1477,6 +1565,7 @@
 				{messages}
 				{submitPrompt}
 				{stopResponse}
+				{submitSiaPrompt}
 			/>
 		</div>
 	</div>

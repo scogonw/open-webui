@@ -1,6 +1,6 @@
 import { APP_NAME } from '$lib/constants';
 import { type Writable, writable } from 'svelte/store';
-import type { GlobalModelConfig, ModelConfig } from '$lib/apis';
+import type { ModelConfig } from '$lib/apis';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
 import { connect, StringCodec } from 'nats.ws';
@@ -12,6 +12,9 @@ export const user: Writable<SessionUser | undefined> = writable(undefined);
 export const teams = writable([]);
 export const files = writable([]);
 export const allUsers = writable([]);
+export const allChatMappings = writable([]);
+export const currentChat = writable([]);
+export const currentChatId = writable(null);
 
 export const natsStatus = writable('Disconnected');
 export const natsMessages = writable([]);
@@ -23,12 +26,9 @@ let callback;
 let currentSubscription;
 
 export async function connectToNats(token) {
-	console.log('Nats Connecting...');
 	try {
 		nc = await connect({ servers: ['wss://websocket.development.scogo.ai'], token: token });
-		nc.publish('chat.1', sc.encode('hello'));
 		natsStatus.set('Connected');
-		console.log('Nats Connected');
 	} catch (error) {
 		console.error('Error connecting to NATS:', error);
 		natsStatus.set('Error');
@@ -50,6 +50,7 @@ export async function subscribeToTopic(topic) {
 	// Subscribe to the new topic
 	try {
 		currentSubscription = nc.subscribe(topic);
+		console.log('subcribed to ', topic);
 
 		(async () => {
 			for await (const message of currentSubscription) {

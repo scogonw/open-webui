@@ -234,7 +234,7 @@
 		isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 10;
 		if (
 			isAtBottom &&
-			metadataOfTeams?.total_count > metadataOfTeams?.limit * metadataOfTeams?.page
+			metadataOfTeams?.has_more
 		) {
 			const teamsdata = await getTeams(
 				access_token,
@@ -264,7 +264,7 @@
 <div class="p-4 md:pr-5 md:pl-5 md:pt-2 h-[90%] w-full flex flex-col">
 	<div class="w-full py-2 flex justify-between items-center">
 		<div
-			class="w-52 md:w-96 h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"
+			class="w-52 md:w-[31%] h-11 rounded-xl bg-[#F7F8FA] shadow-md flex items-center px-5 gap-2 dark:bg-gray-850"
 			in:fade={{ duration: 200 }}
 		>
 			<Search className="size-5 stroke-[#818181]" />
