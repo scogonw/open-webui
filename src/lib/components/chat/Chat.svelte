@@ -67,7 +67,7 @@
 	import CallOverlay from './MessageInput/CallOverlay.svelte';
 	import { error } from '@sveltejs/kit';
 	import NewNavbar from '../layout/NewNavbar.svelte';
-	import { getAllAiChats, sendMessageInChatMapping } from '$lib/apis/triton';
+	import { getAllAiChats, getMessagesByChatId, sendMessageInChatMapping } from '$lib/apis/triton';
 
 	const i18n: Writable<i18nType> = getContext('i18n');
 
@@ -136,13 +136,6 @@
 	}
 
 	const access_token = getCookie('access_token');
-
-	onMount(async () => {
-		const data = await getAllAiChats(access_token);
-		if (data) {
-			allChatMappings.set(data);
-		}
-	});
 
 	// onMount(async () => {
 	// 	const onMessageHandler = async (event) => {
@@ -379,14 +372,13 @@
 		const parsedChunk = JSON.parse(chunk);
 		const { data, is_agent, metadata } = parsedChunk;
 
-		if(['',null,undefined,false].includes(is_agent)){
+		if (['', null, undefined, false].includes(is_agent)) {
 			return;
 		}
 
 		chatStream = [...chatStream, data];
 
 		if (metadata?.finish_reason) {
-			console.log($currentChat)
 			chatStream = [];
 			return;
 		}
@@ -395,7 +387,7 @@
 			author: {
 				is_agent: true
 			},
-			content: chatStream.join(' ').trim()
+			content: chatStream.join('').trim()
 		};
 
 		if ($currentChat[$currentChat?.length - 1]?.author?.is_agent) {
@@ -436,6 +428,9 @@
 				currentChatId.set(data?.chat_id);
 				currentChat.set([data]);
 				subscribeToTopic(`chat.${data.chat_id}.messages`);
+				const params = new URLSearchParams($page.url.search);
+				params.set('chat_id', data.chat_id);
+				goto(`${$page.url.pathname}?${params.toString()}`, { replaceState: true });
 			}
 		} else {
 			const data = await sendMessageInChatMapping(access_token, id, body);
@@ -520,6 +515,16 @@
 
 		return _responses;
 	};
+
+	onMount(async () => {
+		const params = new URLSearchParams($page.url.search);
+		const chat_id = params.get('chat_id');
+		if(chat_id){
+			const data = await getMessagesByChatId(access_token,chat_id);
+			currentChatId.set(chat_id);
+			currentChat.set(data);
+		}
+	});
 
 	const sendPrompt = async (prompt, parentId, { modelId = null, newChat = false } = {}) => {
 		let _responses = [];
@@ -1537,6 +1542,7 @@
 						bind:messages
 						bind:autoScroll
 						bind:prompt
+						bind:siaPrompt
 						bottomPadding={files.length > 0}
 						{sendPrompt}
 						{continueGeneration}

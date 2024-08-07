@@ -131,7 +131,7 @@
 		});
 
 		showSidebar.set(window.innerWidth > BREAKPOINT);
-		await chats.set(await getChatList(localStorage.token));
+		// await chats.set(await getChatList(localStorage.token));
 
 		let touchstart;
 		let touchend;

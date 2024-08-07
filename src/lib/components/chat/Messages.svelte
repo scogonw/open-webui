@@ -17,6 +17,7 @@
 	import History from '../icons/History.svelte';
 	import Sheet from '../common/Sheet.svelte';
 	import HistorySheet from '../layout/History/HistorySheet.svelte';
+	import { marked } from 'marked';
 
 	const i18n = getContext('i18n');
 
@@ -34,6 +35,7 @@
 	export let history = {};
 	export let messages = [];
 	export let chatStream = [];
+	export let siaPrompt;
 
 	export let selectedModels;
 
@@ -258,6 +260,10 @@
 	};
 
 	let isSheetOpen = false;
+
+	function convertMarkdownToHtml(content) {
+		return marked.parse(content || '');
+	}
 </script>
 
 <div class="h-full flex overflow-hidden relative">
@@ -284,33 +290,35 @@
 			submitPrompt={async (p) => {
 				let text = p;
 
-				if (p.includes('{{CLIPBOARD}}')) {
-					const clipboardText = await navigator.clipboard.readText().catch((err) => {
-						toast.error($i18n.t('Failed to read clipboard contents'));
-						return '{{CLIPBOARD}}';
-					});
+				// if (p.includes('{{CLIPBOARD}}')) {
+				// 	const clipboardText = await navigator.clipboard.readText().catch((err) => {
+				// 		toast.error($i18n.t('Failed to read clipboard contents'));
+				// 		return '{{CLIPBOARD}}';
+				// 	});
 
-					text = p.replaceAll('{{CLIPBOARD}}', clipboardText);
-				}
+				// 	text = p.replaceAll('{{CLIPBOARD}}', clipboardText);
+				// }
 
-				prompt = text;
+				// prompt = text;
 
-				await tick();
+				// await tick();
 
 				const chatInputElement = document.getElementById('chat-textarea');
 				if (chatInputElement) {
-					prompt = p;
-
-					chatInputElement.style.height = '';
-					chatInputElement.style.height = Math.min(chatInputElement.scrollHeight, 200) + 'px';
 					chatInputElement.focus();
+					siaPrompt = text;
+					// prompt = p;
 
-					const words = findWordIndices(prompt);
+					// chatInputElement.style.height = '';
+					// chatInputElement.style.height = Math.min(chatInputElement.scrollHeight, 200) + 'px';
+					// chatInputElement.focus();
 
-					if (words.length > 0) {
-						const word = words.at(0);
-						chatInputElement.setSelectionRange(word?.startIndex, word.endIndex + 1);
-					}
+					// const words = findWordIndices(prompt);
+
+					// if (words.length > 0) {
+					// 	const word = words.at(0);
+					// 	chatInputElement.setSelectionRange(word?.startIndex, word.endIndex + 1);
+					// }
 				}
 
 				await tick();
@@ -346,7 +354,8 @@
 							<div class="w-full">
 								<div class="flex justify-start mb-2">
 									<div class="rounded-3xl max-w-[90%] px-5 py-2 bg-gray-50 dark:bg-gray-850">
-										<pre id="user-message">{message?.content}</pre>
+										<div id="sia-message">{@html convertMarkdownToHtml(message?.content)}</div>
+										<!-- <pre id="sia-message">{message?.content}</pre> -->
 									</div>
 								</div>
 							</div>

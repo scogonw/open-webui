@@ -428,3 +428,22 @@ export const sendMessageInChatMapping = async (token, id, body) => {
 		console.log(error);
 	}
 };
+
+export const getMessagesByChatId = async (token, id) => {
+	try {
+		const res = await fetch(`${SCOGO_CHAT_API_K8S_HOST}/v1/chat/${id}/messages`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+		if (res.ok) {
+			const { data } = await res.json();
+			return data;
+		}
+		toast.error('Error : Unable to get messages');
+	} catch (error) {
+		console.log(error);
+	}
+};
